@@ -8,6 +8,7 @@ import config as config
 import numpy as np
 import imp
 imp.reload(config)
+arcpy.CheckOutExtension('Spatial')
 # ======================================================================================================================
 # Set environment settings
 env.workspace = str(config.data_path)
@@ -53,151 +54,103 @@ except AttributeError:
     pass
 
 # =======================================================================
-# Clip to study area buffer, reproject, resample rasters if resolution =/= DEM resolution, clip to study area
+# Set up functions
+# =======================================================================
+
+class getROI:
+    def __init__(self, roi, dem_in):
+        self.roi = roi
+        self.roi_buff = temp_dir + '/roi_buff.shp'
+        self.roi_reproj = temp_dir + '/roi_reproj.shp'
+        
+        arcpy.Project_management(in_dataset=roi, out_dataset=self.roi_reproj, out_coor_system=arcpy.Describe(dem_in).spatialReference)
+        arcpy.CopyFeatures_management(self.roi_reproj, roi)
+        arcpy.Buffer_analysis(in_features=roi, out_feature_class=self.roi_buff,
+                              buffer_distance_or_field="15 Kilometers",
+                              line_side="FULL", line_end_type="ROUND", dissolve_option="NONE", dissolve_field="",
+                              method="PLANAR")
+        
+
+
+class getDEMspecs:
+    """ Get DEM cell size and spatial ref for reprojection/resampling of rasters """
+    def __init__(self, dem_out):
+        self.dem = dem_out
+        self.x = arcpy.GetRasterProperties_management(dem_out, 'CELLSIZEX').getOutput(0)
+        self.y = arcpy.GetRasterProperties_management(dem_out, 'CELLSIZEY').getOutput(0)
+        self.xy = self.x + ' ' + self.y
+        self.spatial_ref = arcpy.Describe(dem_out).spatialReference
+        self.extent = arcpy.sa.Raster(dem_out).extent
+
+
+def reshape(in_path, out_path, name, resamp_type, dem_specs, temp_dir, roi_layers):
+    print 'Prepping ' + name + ' ...'
+    file_in = str(in_path)
+    buff = temp_dir + '/buff.tif'
+    reproj = temp_dir + '/reproj.tif'
+    file_out = str(out_path)
+    arcpy.Clip_management(in_raster=file_in, out_raster=buff, in_template_dataset=roi_layers.roi_buff,
+                          clipping_geometry=True)
+    arcpy.ProjectRaster_management(in_raster=buff, out_raster=reproj, out_coor_system=dem_specs.spatial_ref,
+                                   resampling_type=resamp_type,
+                                   cell_size=dem_specs.xy)
+    envelope = '{} {} {} {}'.format(dem_specs.extent.XMin, dem_specs.extent.YMin, dem_specs.extent.XMax, dem_specs.extent.YMax)
+    arcpy.Clip_management(in_raster=reproj, out_raster=file_out, rectangle=envelope, nodata_value=-9999)
+    print'Done'
+
+# =======================================================================
+# Clip to study area buffer, reproject, resample rasters
 # =======================================================================
 
 # Fetch study area and buffer
-study_area = str(config.study_area)
-study_area_buff = temp_dir + '/study_area_buff.shp'
-arcpy.Buffer_analysis(in_features=study_area, out_feature_class=study_area_buff, buffer_distance_or_field="15 Kilometers",
-                      line_side="FULL", line_end_type="ROUND", dissolve_option="NONE", dissolve_field="", method="PLANAR")
-
-# DEM
 try:
     dem_in = temp_dir + '/' + dem_mosaic
 except NameError:
     dem_in = str(config.dem)
+
 dem_out = str(config.dem_out)
-arcpy.Clip_management(in_raster=dem_in, out_raster=dem_out, in_template_dataset=study_area, nodata_value=-999999, clipping_geometry=True)
+dem_spatialref = arcpy.Describe(dem_in).spatialReference
 
-# Get DEM cell size and spatial ref for reprojection/resampling of rasters
-dem_x = arcpy.GetRasterProperties_management(dem_out, 'CELLSIZEX').getOutput(0)
-dem_y = arcpy.GetRasterProperties_management(dem_out, 'CELLSIZEY').getOutput(0)
-dem_xy = dem_x + ' ' + dem_y
-dem_spatial_ref = arcpy.Describe(dem_out).spatialReference
+roi = str(config.study_area)
+roi_layers = getROI(roi, dem_in)
+arcpy.Clip_management(in_raster=dem_in, out_raster=dem_out, in_template_dataset=roi_layers.roi, nodata_value=-9999, clipping_geometry=True)
 
-# Flow accumulation
-print 'Prepping flow accumulation ...'
-fac_in = str(config.fac)
-fac_buff = temp_dir + '/fac_buff.tif'
-fac_reproj = temp_dir + '/fac_reproj.tif'
-fac_out = str(config.fac_out)
-arcpy.Clip_management(in_raster=fac_in, out_raster=fac_buff, in_template_dataset=study_area_buff, clipping_geometry=True)
-arcpy.ProjectRaster_management(in_raster=fac_buff, out_raster=fac_reproj, out_coor_system=dem_spatial_ref, resampling_type='BILINEAR',
-                               cell_size=dem_xy)
-arcpy.Clip_management(in_raster=fac_reproj, out_raster=fac_out, in_template_dataset=study_area, clipping_geometry=True)
-size = np.round((config.fac_out.stat().st_size / 10e6), 2)
-print 'File size: ', size, ' MB'
+dem_specs = getDEMspecs(dem_out)
 
-# NLCD
-print 'Prepping NLCD ...'
-nlcd_in = str(config.nlcd)
-nlcd_buff = temp_dir + '/nlcd_buff.tif'
-nlcd_reproj = temp_dir + '/nlcd_reproj.tif'
-nlcd_out = str(config.nlcd_out)
-arcpy.Clip_management(in_raster=nlcd_in, out_raster=nlcd_buff, in_template_dataset=study_area_buff, clipping_geometry=True)
-arcpy.ProjectRaster_management(in_raster=nlcd_buff, out_raster=nlcd_reproj, out_coor_system=dem_spatial_ref, resampling_type='NEAREST',
-                               cell_size=dem_xy)
-arcpy.Clip_management(in_raster=nlcd_reproj, out_raster=nlcd_out, in_template_dataset=study_area, clipping_geometry=True)
-size = np.round((config.nlcd_out.stat().st_size / 10e6), 2)
-print 'File size: ', size, ' MB'
+# gSSURGO map
+reshape(config.gssurgo, config.gssurgo_out, 'gSSURGO', 'NEAREST', dem_specs, temp_dir, roi_layers)
 
-# gSSURGO soil map
-print 'Prepping soil ...'
-soil_in = str(config.soil)
-soil_buff = temp_dir + '/soil_buff.tif'
-soil_reproj = temp_dir + '/soil_reproj.tif'
-soil_out = str(config.soil_out)
-arcpy.Clip_management(in_raster=soil_in, out_raster=soil_buff, in_template_dataset=study_area_buff, clipping_geometry=True)
-arcpy.ProjectRaster_management(in_raster=soil_buff, out_raster=soil_reproj, out_coor_system=dem_spatial_ref, resampling_type='NEAREST',
-                               cell_size=dem_xy)
-arcpy.Clip_management(in_raster=soil_reproj, out_raster=soil_out, in_template_dataset=study_area, clipping_geometry=True)
-size = np.round((config.soil_out.stat().st_size / 10e6), 2)
-print 'File size: ', size, ' MB'
+# STATSGO2 map
+reshape(config.statsgo2, config.statsgo2_out, 'STATSGO2', 'NEAREST', dem_specs, temp_dir, roi_layers)
 
-# Biomass
-print 'Prepping biomass ...'
-try:
-    biomass_in = temp_dir + '/' + biomass_mosaic
-except NameError:
-    biomass_in = str(config.biomass)
-biomass_buff = temp_dir + '/biomass_buff.tif'
-biomass_reproj = temp_dir + '/biomass_reproj.tif'
-biomass_out = str(config.biomass_out)
-arcpy.Clip_management(in_raster=biomass_in, out_raster=biomass_buff, in_template_dataset=study_area_buff, clipping_geometry=True)
-arcpy.ProjectRaster_management(in_raster=biomass_buff, out_raster=biomass_reproj, out_coor_system=dem_spatial_ref, resampling_type='BILINEAR',
-                               cell_size=dem_xy)
-arcpy.Clip_management(in_raster=biomass_reproj, out_raster=biomass_out, in_template_dataset=study_area, clipping_geometry=True)
-size = np.round((config.biomass_out.stat().st_size / 10e6), 2)
-print 'File size: ', size, ' MB'
+# # NLCD
+# reshape(config.nlcd, config.nlcd_out, 'nlcd', 'NEAREST', temp_dir, roi_layers)
+
+# # Biomass
+# try:
+#     biomass = temp_dir + '/' + biomass_mosaic
+# except NameError:
+#     biomass = str(config.biomass)
+# reshape(config.biomass, config.biomass_out, 'biomass', 'NEAREST', temp_dir, roi_layers)
 
 # Impervious surfaces
-print 'Prepping imperv ...'
 try:
-    imperv_in = temp_dir + '/' + imperv_mosaic
+    imperv = temp_dir + '/' + imperv_mosaic
 except NameError:
-    imperv_in = str(config.imperv)
-imperv_buff = temp_dir + '/imperv_buff.tif'
-imperv_reproj = temp_dir + '/imperv_reproj.tif'
-imperv_out = str(config.imperv_out)
-arcpy.Clip_management(in_raster=imperv_in, out_raster=imperv_buff, in_template_dataset=study_area_buff, clipping_geometry=True)
-arcpy.ProjectRaster_management(in_raster=imperv_buff, out_raster=imperv_reproj, out_coor_system=dem_spatial_ref, resampling_type='BILINEAR',
-                               cell_size=dem_xy)
-arcpy.Clip_management(in_raster=imperv_reproj, out_raster=imperv_out, in_template_dataset=study_area, clipping_geometry=True)
-size = np.round((config.imperv_out.stat().st_size / 10e6), 2)
-print 'File size: ', size, ' MB'
+    imperv = str(config.imperv)
+reshape(config.imperv, config.imperv_out, 'imperv', 'NEAREST', dem_specs, temp_dir, roi_layers)
 
 # PRISM temperature
-print 'Prepping PRISM temp ...'
-prism_temp_in = str(config.prism_temp)
-prism_temp_buff = temp_dir + '/prism_temp_buff.tif'
-prism_temp_reproj = temp_dir + '/prism_temp_reproj.tif'
-prism_temp_out = str(config.prism_temp_out)
-arcpy.Clip_management(in_raster=prism_temp_in, out_raster=prism_temp_buff, in_template_dataset=study_area_buff, clipping_geometry=True)
-arcpy.ProjectRaster_management(in_raster=prism_temp_buff, out_raster=prism_temp_reproj, out_coor_system=dem_spatial_ref, resampling_type='BILINEAR',
-                               cell_size=dem_xy)
-arcpy.Clip_management(in_raster=prism_temp_reproj, out_raster=prism_temp_out, in_template_dataset=study_area, clipping_geometry=True)
-size = np.round((config.prism_temp_out.stat().st_size / 10e6), 2)
-print 'File size: ', size, ' MB'
+reshape(config.prism_temp, config.prism_temp_out, 'prism_temp', 'BILINEAR', dem_specs, temp_dir, roi_layers)
 
 # PRISM precipitation
-print 'Prepping PRISM precip ...'
-prism_precip_in = str(config.prism_precip)
-prism_precip_buff = temp_dir + '/prism_precip_buff.tif'
-prism_precip_reproj = temp_dir + '/prism_precip_reproj.tif'
-prism_precip_out = str(config.prism_precip_out)
-arcpy.Clip_management(in_raster=prism_precip_in, out_raster=prism_precip_buff, in_template_dataset=study_area_buff, clipping_geometry=True)
-arcpy.ProjectRaster_management(in_raster=prism_precip_buff, out_raster=prism_precip_reproj, out_coor_system=dem_spatial_ref, resampling_type='BILINEAR',
-                               cell_size=dem_xy)
-arcpy.Clip_management(in_raster=prism_precip_reproj, out_raster=prism_precip_out, in_template_dataset=study_area, clipping_geometry=True)
-size = np.round((config.prism_precip_out.stat().st_size / 10e6), 2)
-print 'File size: ', size, ' MB'
+reshape(config.prism_precip, config.prism_precip_out, 'prism_precip', 'BILINEAR', dem_specs, temp_dir, roi_layers)
 
 # Cover ID
-print 'Prepping cover ID ...'
-cover_id_in = str(config.cover_id)
-cover_id_buff = temp_dir + '/cover_id_buff.tif'
-cover_id_reproj = temp_dir + '/cover_id_reproj.tif'
-cover_id_out = str(config.cover_id_out)
-arcpy.Clip_management(in_raster=cover_id_in, out_raster=cover_id_buff, in_template_dataset=study_area_buff, clipping_geometry=True)
-arcpy.ProjectRaster_management(in_raster=cover_id_buff, out_raster=cover_id_reproj, out_coor_system=dem_spatial_ref, resampling_type='NEAREST',
-                               cell_size=dem_xy)
-arcpy.Clip_management(in_raster=cover_id_reproj, out_raster=cover_id_out, in_template_dataset=study_area, clipping_geometry=True)
-size = np.round((config.cover_id_out.stat().st_size / 10e6), 2)
-print 'File size: ', size, ' MB'
+reshape(config.cover_id, config.cover_id_out, 'cover_id', 'NEAREST', dem_specs, temp_dir, roi_layers)
 
 # Cover age
-print 'Prepping cover age ...'
-cover_age_in = str(config.cover_age)
-cover_age_buff = temp_dir + '/cover_age_buff.tif'
-cover_age_reproj = temp_dir + '/cover_age_reproj.tif'
-cover_age_out = str(config.cover_age_out)
-arcpy.Clip_management(in_raster=cover_age_in, out_raster=cover_age_buff, in_template_dataset=study_area_buff, clipping_geometry=True)
-arcpy.ProjectRaster_management(in_raster=cover_age_buff, out_raster=cover_age_reproj, out_coor_system=dem_spatial_ref, resampling_type='NEAREST',
-                               cell_size=dem_xy)
-arcpy.Clip_management(in_raster=cover_age_reproj, out_raster=cover_age_out, in_template_dataset=study_area, clipping_geometry=True)
-size = np.round((config.cover_age_out.stat().st_size / 10e6), 2)
-print 'File size: ', size, ' MB'
+reshape(config.cover_age, config.cover_age_out, 'cover_age', 'NEAREST', dem_specs, temp_dir, roi_layers)
 
 # Heat load index: calculate for study area
 arcpy.ImportToolbox(str(config.geomorph_tbx_path))
