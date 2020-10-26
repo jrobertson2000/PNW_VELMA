@@ -26,16 +26,12 @@ arcpy.CreateFileGDB_management(temp_dir, temp_gdb)
 # Resample Ellsworth DEM from 1m to 10m
 # =======================================================================
 
-dem_in = str(config.data_path / 'topography' / 'ellsworth' / 'Surfaces_byTNC_v2007' / 'be_ellsworth_dem.tif')
-dem_resamp = temp_dir + '/dem_resamp.tif'
-dem_out = str(Path(dem_in).parents[0] / 'be_ellsworth_dem_filled_10m.tif')
+dem_raw = str(config.dem_raw)
+# dem_resamp = temp_dir + '/dem_resamp.tif'
+dem = str(config.dem)
 
 # Resample
-arcpy.Resample_management(in_raster=dem_in, out_raster=dem_resamp, cell_size="10 10", resampling_type="CUBIC")
-
-# Fill sinks
-dem_filled = Fill(dem_resamp)
-dem_filled.save(dem_out)
+arcpy.Resample_management(in_raster=dem_raw, out_raster=dem, cell_size="10 10", resampling_type="CUBIC")
 
 
 
