@@ -1,4 +1,4 @@
-# Data prep for Ellsworth Preserve files
+# Rasterizes stand shapefiles into separate rasters of age, type, and VELMA ID
 # Script written in Python 3.7
 
 import config as config
@@ -40,7 +40,7 @@ stand_shp.loc[pd.isnull(stand_shp['Age_2020']), 'Age_2020'] = 0
 stand_shp.insert(0, 'VELMA_ID', range(1, len(stand_shp)+1))
 # Export shp as csv for creating disturbance map based on stand IDs
 stand_shp_csv = pd.DataFrame(stand_shp.drop(columns='geometry'))
-stand_shp_csv.to_csv(config.stand_id_velma.parents[0] / 'disturbance_map.csv', index=False)
+stand_shp_csv.to_csv(config.cover_id_velma.parents[0] / 'disturbance_map.csv', index=False)
 
 # Reproject to DEM crs
 dem_file = str(config.dem)
@@ -51,7 +51,7 @@ updated_shp = config.stand_shp.parents[0] / 'Ellsworth_Stands_updated.shp'
 stand_shp.to_file(updated_shp)
 
 # Convert vector to raster (stand type)
-stand_type = str(config.stand_type)
+stand_type = str(config.cover_type)
 # Take DEM and set all values to NaN, then burn species shp into empty DEM raster
 with rasterio.open(dem_file, 'r') as src:
     in_arr = src.read(1)
@@ -64,7 +64,7 @@ with rasterio.open(dem_file, 'r') as src:
         out.write_band(1, burned)
 
 # Convert vector to raster (stand age)
-stand_age = str(config.stand_age)
+stand_age = str(config.cover_age)
 # Take DEM and set all values to NaN, then burn species shp into empty DEM raster
 with rasterio.open(dem_file, 'r') as src:
     in_arr = src.read(1)
@@ -77,7 +77,7 @@ with rasterio.open(dem_file, 'r') as src:
         out.write_band(1, burned)
 
 # Convert vector to raster (stand ID)
-stand_id = str(config.stand_id)
+stand_id = str(config.cover_id)
 # Take DEM and set all values to NaN, then burn species shp into empty DEM raster
 with rasterio.open(dem_file, 'r') as src:
     in_arr = src.read(1)
