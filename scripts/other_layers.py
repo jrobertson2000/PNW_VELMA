@@ -6,30 +6,20 @@ from arcpy import env
 import tempfile
 import config as config
 import imp
-from utils import reshape, getDEMspecs, getROI
+from utils import reshape, getDEMspecs, getROI, velma_format
 imp.reload(config)
 arcpy.CheckOutExtension('Spatial')
 # ======================================================================================================================
-# Set environment settings
-env.workspace = str(config.data_path)
-arcpy.env.overwriteOutput = True
-
 # Create temp directory for intermediary files
 temp_dir = tempfile.mkdtemp()
+
+# Set environment settings
+env.workspace = temp_dir  # Set to temp so that rasters created during velma_format are deleted
+arcpy.env.overwriteOutput = True
 
 # =======================================================================
 # Mosaic rasters
 # =======================================================================
-
-# Mosaic DEMs
-try:
-    dem_list = [str(x) for x in config.dem_list]
-    dem_mosaic = 'dem_mosaic.tif'
-    arcpy.MosaicToNewRaster_management(input_rasters=dem_list, output_location=temp_dir,
-                                       raster_dataset_name_with_extension=dem_mosaic, pixel_type='32_BIT_SIGNED',
-                                       number_of_bands=1)
-except AttributeError:
-    pass
 
 # Mosaic biomass
 try:
@@ -56,19 +46,11 @@ except AttributeError:
 # =======================================================================
 
 # Fetch study area and buffer
-try:
-    dem_in = temp_dir + '/' + dem_mosaic
-except NameError:
-    dem_in = str(config.dem)
-
 roi = str(config.study_area)
-dem_in = str(config.dem)
-dem_out = str(config.dem_out)
-roi_layers = getROI(roi, dem_in, temp_dir)
+dem_velma = str(config.dem_velma)
+roi_layers = getROI(roi, dem_velma, temp_dir)
 
-arcpy.Clip_management(in_raster=dem_in, out_raster=dem_out, in_template_dataset=roi_layers.roi, nodata_value=-9999,
-                      clipping_geometry=True)
-dem_specs = getDEMspecs(dem_out)
+dem_specs = getDEMspecs(dem_velma)
 
 # # NLCD
 # reshape(config.nlcd, config.nlcd_out, 'nlcd', 'NEAREST', temp_dir, roi_layers)
@@ -86,18 +68,24 @@ try:
 except NameError:
     imperv = str(config.imperv)
 reshape(config.imperv, config.imperv_out, 'imperv', 'NEAREST', dem_specs, temp_dir, roi_layers)
+velma_format(config.imperv_out, config.imperv_velma)
 
 # PRISM temperature
 reshape(config.prism_temp, config.prism_temp_out, 'prism_temp', 'BILINEAR', dem_specs, temp_dir, roi_layers)
+velma_format(config.prism_temp_out, config.prism_temp_velma)
 
 # PRISM precipitation
 reshape(config.prism_precip, config.prism_precip_out, 'prism_precip', 'BILINEAR', dem_specs, temp_dir, roi_layers)
+velma_format(config.prism_precip_out, config.prism_precip_velma)
 
 # Cover ID
 reshape(config.cover_id, config.cover_id_out, 'cover_id', 'NEAREST', dem_specs, temp_dir, roi_layers)
+velma_format(config.cover_id_out, config.cover_id_velma)
 
 # Cover age
 reshape(config.cover_age, config.cover_age_out, 'cover_age', 'NEAREST', dem_specs, temp_dir, roi_layers)
+velma_format(config.cover_age_out, config.cover_age_velma)
 
 # Cover type
 reshape(config.cover_type, config.cover_type_out, 'cover_type', 'NEAREST', dem_specs, temp_dir, roi_layers)
+velma_format(config.cover_type_out, config.cover_type_velma)
