@@ -30,17 +30,18 @@ class getROI:
 class getDEMspecs:
     """ Get DEM cell size and spatial ref for reprojection/resampling of rasters """
 
-    def __init__(self, dem_out):
-        self.dem = dem_out
-        self.x = arcpy.GetRasterProperties_management(dem_out, 'CELLSIZEX').getOutput(0)
-        self.y = arcpy.GetRasterProperties_management(dem_out, 'CELLSIZEY').getOutput(0)
+    def __init__(self, dem_velma):
+        self.dem = dem_velma
+        self.x = arcpy.GetRasterProperties_management(dem_velma, 'CELLSIZEX').getOutput(0)
+        self.y = arcpy.GetRasterProperties_management(dem_velma, 'CELLSIZEY').getOutput(0)
         self.xy = self.x + ' ' + self.y
-        self.spatial_ref = arcpy.Describe(dem_out).spatialReference
-        self.extent = arcpy.sa.Raster(dem_out).extent
+        self.spatial_ref = arcpy.Describe(dem_velma).spatialReference
+        self.extent = arcpy.sa.Raster(dem_velma).extent
 
 
 def reshape(in_path, out_path, name, resamp_type, dem_specs, temp_dir, roi_layers):
     print 'Prepping ' + name + ' ...'
+    arcpy.env.snapRaster = dem_specs.dem
     file_in = str(in_path)
     buff = temp_dir + '/buff.tif'
     reproj = temp_dir + '/reproj.tif'
@@ -54,5 +55,11 @@ def reshape(in_path, out_path, name, resamp_type, dem_specs, temp_dir, roi_layer
                                     dem_specs.extent.YMax)
     arcpy.Clip_management(in_raster=reproj, out_raster=file_out, rectangle=envelope, nodata_value=-9999)
     print'Done'
+
+
+def velma_format(in_file, out_file):
+    # Replace NoData values with legitimate cell values
+    reclass = arcpy.sa.Con(arcpy.sa.IsNull(str(in_file)), 1, str(in_file), 'Value = 1')
+    arcpy.RasterToASCII_conversion(in_raster=reclass, out_ascii_file=str(out_file))
 
 
