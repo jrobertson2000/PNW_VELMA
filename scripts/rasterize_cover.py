@@ -19,17 +19,30 @@ importlib.reload(config)
 # Edit species names to be VELMA appropriate and fill nulls
 stand_shp = str(config.stand_shp)
 stand_shp = gpd.read_file(config.stand_shp)
+
+# Replace slashes with underscores
 stand_shp['STAND_TYPE'] = stand_shp['STAND_TYPE'].str.replace('/', '_')
 stand_shp['STAND_TYPE'] = stand_shp['STAND_TYPE'].str.replace('-', '_')
-stand_shp.loc[pd.isnull(stand_shp['STAND_TYPE']), 'STAND_TYPE'] = 'NONE'
+
+# Fix some errors and combine duplicate stand types
+stand_shp.loc[pd.isnull(stand_shp['STAND_TYPE']), 'STAND_TYPE'] = 'BARE'
+stand_shp['STAND_TYPE'] = stand_shp['STAND_TYPE'].replace('TNC', 'DF')  # Changing these errors to DF
+stand_shp['STAND_TYPE'] = stand_shp['STAND_TYPE'].replace('50074', 'DF')
+stand_shp['STAND_TYPE'] = stand_shp['STAND_TYPE'].replace('WH_RC_SS_RA', 'WH_SS_RC_RA')
+
+# Remove numeric suffixes
+p = [[j for j in i if not j.isnumeric()] for i in stand_shp['STAND_TYPE'].str.split('_')]
+[i for i in stand_shp['STAND_TYPE'].str.split('_')]
+p = ['_'.join(i) for i in p]
+stand_shp['STAND_TYPE'] = p
 
 # Assign numbers to unique species names
 unique_species = stand_shp['STAND_TYPE'].unique().tolist()
 unique_numbers = (np.arange(len(unique_species))+1).tolist()
 species_num_dict = {unique_species[i]: unique_numbers[i] for i in range(len(unique_species))}
 stand_shp['SPECIES_ID'] = stand_shp['STAND_TYPE'].map(species_num_dict)
-key = pd.DataFrame(np.column_stack([unique_species, unique_numbers]), columns=['stand_type', 'species_ID'])  # Save species/number key
-key.to_csv(config.stand_shp.parents[0] / 'stand_ID_key.csv', index=False)
+key = pd.DataFrame(np.column_stack([unique_species, unique_numbers]), columns=['type', 'id'])  # Save species/number key
+key.to_csv(config.cover_type_velma.parents[0] / 'cover_type_key.csv', index=False)
 
 # Convert ages from strings to numbers
 stand_shp['Age_2020'].replace('200+', '200', inplace=True)
