@@ -1,49 +1,56 @@
 # Creates disturbance maps for harvest scenarios
-# Script written in Python 2.7 for ArcPy, not compatible with Python 3.X
+# Script written in Python 3.7
 
-import arcpy
-from arcpy import env
-arcpy.CheckOutExtension('Spatial')
 import config as config
-from pathlib import Path
-import tempfile
-import pandas as pd
 import numpy as np
-import imp
-import errno
-imp.reload(config)
-
+import pandas as pd
+import matplotlib.pyplot as plt
+import tempfile
+import importlib
+from utils import flowlines
+from scipy import ndimage
+importlib.reload(config)
 # ======================================================================================================================
-# Set environment settings
-env.workspace = str(config.data_path)
-arcpy.env.overwriteOutput = True
 
 # Create temp directory for intermediary files
 temp_dir = tempfile.mkdtemp()
-temp_gdb = 'temp.gdb'
-arcpy.CreateFileGDB_management(temp_dir, temp_gdb)
 
 # =======================================================================
 # Create disturbance maps from stand rasters
+# For each scenario (e.g. clearcut, 1st trimming, 2nd trimming) there needs to be a binary filter map that
+# designates which cells are affected by the disturbance. Each stand will have the same filter value. The filter map is
+# created by supplying a text file with the VELMA_IDs that will be affected by the disturbance. For Ellsworth, a 10m
+# no-management buffer is applied around streams for all scenarios.
 # =======================================================================
-# Requires disturbance_map.csv which must have columns VELMA_ID and DISTURBANCE=0 or 1
 
-# Do disturbance stuff here
+cover_ids = np.loadtxt(str(config.cover_id_velma), skiprows=6)  # Each stand has a different number
+# These are the VELMA_IDs of the Ellsworth Experimental Basins
+basin_ids = pd.read_csv(str(config.cover_id_velma.parents[0] / 'experimental_basin_velma_id.csv'))
 
-# Create binary disturbance map
-dist_key_file = config.stand_id_velma.parents[0] / 'disturbance_map.csv'
-dist_key = pd.read_csv(str(dist_key_file))
-remap_values = zip(dist_key['VELMA_ID'], dist_key['DISTURBANCE'])
-stand_id_out = str(config.stand_id_out)
-dist_velma = str(config.dist_velma)
+dist_names = ['current']
 
-# Remap
-remap_values = arcpy.sa.RemapValue(remap_values)
-dist_map = arcpy.sa.Reclassify(in_raster=stand_id_out, reclass_field='Value', remap=remap_values)
+outdir = config.cover_id_velma.parents[0] / 'filter_maps'
+try:
+    outdir.mkdir(parents=True)
+except FileExistsError:
+    pass
 
-# Convert disturbance map to ASCII format
-arcpy.RasterToASCII_conversion(in_raster=dist_map, out_ascii_file=dist_velma)
-arcpy.Delete_management(dist_map)
+# Create flowlines raster and buffer it by 1 cell (10m/30ft)
+flow = flowlines(config.flowlines)
+flow.get_flowlines_ascii(temp_dir)
+no_mgmt_buffer = ndimage.binary_dilation(flow.raster, iterations=1)
 
+# Create list of stands that will be excluded from disturbance
+no_mgmt_stands = basin_ids.loc[(basin_ids['mgmt'] == 'passive') | (basin_ids['mgmt'] == 'control')]['VELMA_ID'].tolist()
 
+for i, dist_name in enumerate(dist_names):
+    filter_map = ~np.isin(cover_ids, no_mgmt_stands) * 1  # 1=disturbance, 0=no disturbance
+    filter_map[no_mgmt_buffer] = 0
+    # plt.imshow(filter_map)
+    outfile = outdir / '{}_filter.asc'.format(dist_name)
+    flow.raster_header
+    f = open(outfile, 'w')
+    f.write(flow.raster_header)
+    np.savetxt(f, filter_map, fmt='%i')
+    f.close()
 
