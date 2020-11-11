@@ -9,6 +9,7 @@ import rasterio
 import tempfile
 from rasterio import features
 from pathlib import Path
+from utils import flowlines
 import matplotlib.pyplot as plt
 import importlib
 importlib.reload(config)
@@ -44,37 +45,14 @@ roi_asc = np.loadtxt(roi_raster, skiprows=6)
 
 
 # =======================================================================
-# Rasterize streamflow network
-# =======================================================================
-flow = gpd.read_file(config.flowlines)
-cols = flow.columns.to_list()
-cols.remove('geometry')
-flow = flow.drop(cols, axis=1)
-flow['value'] = 1
-
-dem_file = str(config.dem_velma)
-
-flow_raster = temp_dir + '/flow_raster.asc'
-
-with rasterio.open(dem_file, 'r') as src:
-    in_arr = src.read(1)
-    in_arr[:] = 0
-    meta = src.meta.copy()
-    meta = src.meta
-    with rasterio.open(flow_raster, 'w+', **meta) as out:
-        shapes = ((geom, value) for geom, value in zip(flow.geometry, flow.value))
-        burned = features.rasterize(shapes=shapes, fill=np.nan, out=in_arr, transform=out.transform)
-        out.write_band(1, burned)
-
-flow_asc = np.loadtxt(flow_raster, skiprows=6)
-
-# =======================================================================
 # Overlay rasters and find outpour point
 # =======================================================================
-flow_asc[flow_asc == 0] = np.nan
+flow = flowlines(config.flowlines)
+flow.get_flowlines_ascii(temp_dir)
+flow.raster[flow.raster == 0] = np.nan
 
 plt.imshow(roi_asc, aspect='equal')
-plt.imshow(flow_asc, aspect='equal')
+plt.imshow(flow.raster, aspect='equal')
 
 # NOTE: plt.imshow() is plotted such that the pixel centers are full integers, not the edges. So go to the quadrant 3
 # (clockwise from top left) of a pixel and round down to get integer row/col coordinates.
