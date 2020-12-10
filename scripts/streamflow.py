@@ -52,7 +52,7 @@ daily_quality = df.merge(quality, left_index=True, right_index=True, how='left')
 daily_quality['year'] = daily_quality.index.year
 daily_quality['doy'] = daily_quality.index.dayofyear
 quality_piv = pd.pivot_table(daily_quality, index=['doy'], columns=['year'], values=['Quality'])
-quality_piv.plot()
+# quality_piv.plot()
 
 # Highlight unreliable values based on quality column
 # ax = flow_piv.plot(subplots=True)
@@ -116,6 +116,15 @@ df['precip_t-3'] = precip['mean_ppt_mm'].shift(3)
 
 obs = df.merge(daily_flow_imp['flow_imp'], left_index=True, right_index=True, how='right')
 
+# Plot streamflow and variables
+
+# Plot
+obs_plot = obs.copy()
+obs_plot['year'] = obs_plot.index.year
+obs_plot['doy'] = obs_plot.index.dayofyear
+fig, axes = plt.subplots(nrows=2)
+obs_plot[obs_plot['year'] == 2004]['flow_imp'].plot(ax=axes[0])
+obs_plot[obs_plot['year'] == 2004]['mean_ppt_mm'].plot(ax=axes[1])
 # ========================================================
 
 
@@ -183,14 +192,18 @@ df_all.plot(subplots=True)
 
 # ========================================================
 # Alternatively, just export the full years (non-modeled) with imputed streamflow
-runoff_velma = obs['flow_imp']
+velma_start = pd.to_datetime('01-01-2004')
+velma_end = pd.to_datetime('12-31-2007')
+runoff_velma = obs[(obs.index >= velma_start) & (obs.index <= velma_end)]['flow_imp']
 outfile = str(config.velma_data / 'runoff' / 'ellsworth_Q_2004_2007.csv')
 runoff_velma.to_csv(outfile, header=False, index=False)
 
-precip_velma = obs['mean_ppt_mm']
+velma_start = pd.to_datetime('01-01-2004')
+velma_end = pd.to_datetime('12-31-2019')
+precip_velma = obs[(obs.index >= velma_start) & (obs.index <= velma_end)]['mean_ppt_mm']
 outfile = str(config.velma_data / 'precip' / 'ellsworth_ppt_2004_2019.csv')
 precip_velma.to_csv(outfile, header=False, index=False)
 
-temp_velma = obs['mean_temp_c']
+temp_velma = obs[(obs.index >= velma_start) & (obs.index <= velma_end)]['mean_temp_c']
 outfile = str(config.velma_data / 'temp' / 'ellsworth_temp_2004_2019.csv')
 temp_velma.to_csv(outfile, header=False, index=False)
