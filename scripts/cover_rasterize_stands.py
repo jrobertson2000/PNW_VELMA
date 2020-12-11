@@ -7,7 +7,11 @@ import pandas as pd
 import geopandas as gpd
 import rasterio
 from rasterio import features
+from utils import flowlines
 from pathlib import Path
+from soil_merger import readHeader
+import tempfile
+from scipy import ndimage
 import importlib
 importlib.reload(config)
 # ======================================================================================================================
@@ -15,6 +19,9 @@ importlib.reload(config)
 # =======================================================================
 # Convert Ellsworth stand vector to raster
 # =======================================================================
+
+# Create temp directory for intermediary files
+temp_dir = tempfile.mkdtemp()
 
 # Edit species names to be VELMA appropriate and fill nulls
 stand_shp = str(config.stand_shp)
@@ -32,9 +39,13 @@ stand_shp['STAND_TYPE'] = stand_shp['STAND_TYPE'].replace('WH_RC_SS_RA', 'WH_SS_
 
 # Remove numeric suffixes
 p = [[j for j in i if not j.isnumeric()] for i in stand_shp['STAND_TYPE'].str.split('_')]
-[i for i in stand_shp['STAND_TYPE'].str.split('_')]
 p = ['_'.join(i) for i in p]
 stand_shp['STAND_TYPE'] = p
+
+# CHANGING THEM ALL TO CONIFER FOR EASE IN VELMA
+conifers = stand_shp['STAND_TYPE'].unique().tolist()
+conifers = [x for x in conifers if x not in ['BARE', 'BPA', 'NF']]
+stand_shp['STAND_TYPE'] = stand_shp['STAND_TYPE'].replace(dict.fromkeys(conifers, 'conifer'))
 
 # Assign numbers to unique species names
 unique_species = stand_shp['STAND_TYPE'].unique().tolist()
@@ -49,14 +60,14 @@ stand_shp['Age_2020'].replace('200+', '200', inplace=True)
 stand_shp['Age_2020'] = stand_shp['Age_2020'].astype(int)
 stand_shp.loc[pd.isnull(stand_shp['Age_2020']), 'Age_2020'] = 0
 
-# Assign unique numbers to each stand+type combo (some stands have multiple stands, so we can't use STAND_ID)
+# Assign unique numbers to each stand+type combo (some stands have multiple stand types, so we can't use STAND_ID)
 stand_shp.insert(0, 'VELMA_ID', range(1, len(stand_shp)+1))
 # Export shp as csv for creating disturbance map based on stand IDs
 stand_shp_csv = pd.DataFrame(stand_shp.drop(columns='geometry'))
 stand_shp_csv.to_csv(config.cover_id_velma.parents[0] / 'disturbance_map.csv', index=False)
 
 # Reproject to DEM crs
-dem_file = str(config.dem)
+dem_file = str(config.dem_raw)
 with rasterio.open(dem_file, 'r') as src:
     dem_crs = src.crs.to_string()
 stand_shp = stand_shp.to_crs(dem_crs)
@@ -101,4 +112,22 @@ with rasterio.open(dem_file, 'r') as src:
         shapes = ((geom, value) for geom, value in zip(stand_shp.geometry, stand_shp.VELMA_ID))
         burned = features.rasterize(shapes=shapes, fill=np.nan, out=in_arr, transform=out.transform)
         out.write_band(1, burned)
+
+# WA requires a 10 meter no-management buffer around all streams, so will add those in with ID=0
+# Create flowlines raster and buffer it by 1 cell (10m/30ft)
+flow = flowlines(config.flowlines)
+flow.get_flowlines_ascii(temp_dir)
+no_mgmt_buffer = ndimage.binary_dilation(flow.raster, iterations=1)
+
+# Overlay buffer on cover ID map and export
+cover_ids = np.loadtxt(str(config.cover_id_velma), skiprows=6)  # Each stand has a different number
+cover_ids[no_mgmt_buffer] = 0
+
+outfile = str(config.cover_id_velma.parents[0] / 'filtermap.asc')
+header = readHeader(str(config.cover_id_velma))
+f = open(outfile, "w")
+f.write(header)
+np.savetxt(f, cover_ids, fmt="%i")
+f.close()
+
 
