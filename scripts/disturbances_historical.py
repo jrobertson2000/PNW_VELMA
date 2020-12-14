@@ -4,8 +4,6 @@
 import config as config
 import numpy as np
 import pandas as pd
-import rasterio
-from rasterio.plot import reshape_as_image, reshape_as_raster
 import matplotlib.pyplot as plt
 from soil_merger import readHeader
 import tempfile
@@ -28,10 +26,11 @@ try:
 except FileExistsError:
     pass
 
-with rasterio.open(yearly_loss_path, 'r') as src:
-    yearly_loss = reshape_as_image(src.read()).squeeze()
+yearly_loss = np.loadtxt(yearly_loss_path, skiprows=6)
 
-years = np.unique(yearly_loss)
+years = np.unique(yearly_loss).tolist()
+years.remove(0)
+
 outfiles = [filter_dir / 'historical_clearcut_{}.asc'.format(2000 + year) for year in years]
 
 header = readHeader(yearly_loss_path)
@@ -42,7 +41,3 @@ for i, year in enumerate(years):
     f.write(header)
     np.savetxt(f, loss, fmt="%i")
     f.close()
-
-# =======================================================================
-
-
