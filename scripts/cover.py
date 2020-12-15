@@ -28,6 +28,14 @@ roi_layers = getROI(roi, dem_velma, temp_dir)
 
 dem_specs = getDEMspecs(dem_velma)
 
-# NLCD
-reshape(config.nlcd, config.nlcd_out, 'nlcd', 'NEAREST', dem_specs, temp_dir, roi_layers)
+# NLCD Land Cover
+reshape(config.nlcd, config.nlcd_out, 'nlcd_landcover', 'NEAREST', dem_specs, temp_dir, roi_layers)
 velma_format(config.nlcd_out, config.nlcd_velma)
+
+# NOAA C-CAP
+reshape(config.noaa_ccap, config.noaa_ccap_out, 'noaa_ccap', 'NEAREST', dem_specs, temp_dir, roi_layers)
+velma_format(config.noaa_ccap_out, config.noaa_ccap_velma)
+
+# NLCD Impervious
+reshape(config.imperv, config.imperv_out, 'nlcd_imperv', 'NEAREST', dem_specs, temp_dir, roi_layers)
+velma_format(config.imperv_out, config.imperv_velma)
