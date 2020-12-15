@@ -41,3 +41,42 @@ for i, year in enumerate(years):
     f.write(header)
     np.savetxt(f, loss, fmt="%i")
     f.close()
+
+# =======================================================================
+# Create historical cover age map corresponding to 2004
+cover_age20_path = config.cover_age_velma
+cover_age20 = np.loadtxt(cover_age20_path, skiprows=6)
+
+# Identify ages (at 2020) of pixels that were cut from 2004-2019 to see if ages match up
+cut_ages = []
+for i, year in enumerate(years):
+    loss = (yearly_loss == year)
+    cut_ages.append(np.unique(cover_age20[loss]))
+
+# Create array of elapsed time between cut date and 2020
+elapsed_time = (np.ones(shape=yearly_loss.shape) * 20) - yearly_loss
+
+# Update and export new cover age map - this is the updated map for 2020 with historical cuts accounted for
+changed_pixels = (yearly_loss > 0)
+cover_age20_updated = cover_age20.copy()
+cover_age20_updated[changed_pixels] = elapsed_time.flatten()[elapsed_time.flatten() != 20]
+
+outfile = config.cover_age_velma.parents[0] / 'cover_age_2020updated.asc'
+f = open(outfile, "w")
+f.write(header)
+np.savetxt(f, cover_age20_updated, fmt="%i")
+f.close()
+
+# But a more accurate map is one that adjusts age based on when it starts
+# This assumes that a pixel is cut at 40 years
+start_year = 2004
+diff = 2020-2004
+historical_age = cover_age20_updated - diff
+historical_age[historical_age <= 0] = historical_age[historical_age <= 0] + 40
+
+outfile = config.cover_age.parents[0] / 'historical_age_{}.asc'.format(start_year)
+f = open(outfile, 'w')
+f.write(header)
+np.savetxt(f, historical_age, fmt='%i')
+f.close()
+
