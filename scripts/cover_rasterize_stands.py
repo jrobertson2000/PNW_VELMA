@@ -23,6 +23,8 @@ importlib.reload(config)
 # Create temp directory for intermediary files
 temp_dir = tempfile.mkdtemp()
 
+filter_dir = config.cover_id_velma.parents[0] / 'filter_maps'
+
 # Edit species names to be VELMA appropriate and fill nulls
 stand_shp = str(config.stand_shp)
 stand_shp = gpd.read_file(config.stand_shp)
@@ -123,7 +125,7 @@ no_mgmt_buffer = ndimage.binary_dilation(flow.raster, iterations=1)
 cover_ids = np.loadtxt(str(config.cover_id_velma), skiprows=6)  # Each stand has a different number
 cover_ids[no_mgmt_buffer] = 0
 
-outfile = str(config.cover_id_velma.parents[0] / 'filtermap.asc')
+outfile = str(filter_dir / 'filtermap.asc')
 header = readHeader(str(config.cover_id_velma))
 f = open(outfile, "w")
 f.write(header)
