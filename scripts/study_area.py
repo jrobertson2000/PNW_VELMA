@@ -9,6 +9,8 @@ import rasterio
 import tempfile
 from rasterio import features
 from pathlib import Path
+from soil_merger import readHeader
+from scipy.ndimage.morphology import binary_fill_holes
 from utils import flowlines
 import matplotlib.pyplot as plt
 import importlib
@@ -41,19 +43,47 @@ with rasterio.open(dem_file, 'r') as src:
         burned = features.rasterize(shapes=shapes, fill=np.nan, out=in_arr, transform=out.transform)
         out.write_band(1, burned)
 
+roi_header = readHeader(roi_raster)
 roi_asc = np.loadtxt(roi_raster, skiprows=6)
 
 
 # =======================================================================
-# Overlay rasters and find outpour point
+# Vectorize delineated DEM (area upstream of outpour point, as exported from JPDEM)
 # =======================================================================
-flow = flowlines(config.flowlines)
-flow.get_flowlines_ascii(temp_dir)
-flow.raster[flow.raster == 0] = np.nan
 
-plt.imshow(roi_asc, aspect='equal')
-plt.imshow(flow.raster, aspect='equal')
+dem_path = config.dem_velma.parents[0] / 'delineated_dem.asc'
+dem = np.loadtxt(dem_path, skiprows=6)
 
-# NOTE: plt.imshow() is plotted such that the pixel centers are full integers, not the edges. So go to the quadrant 3
-# (clockwise from top left) of a pixel and round down to get integer row/col coordinates.
-# E.g. 280.34, 179.405 round down to 280, 179
+dem_simple = dem.astype('int16')
+dem_simple[dem_simple > 1] = 1
+dem_simple[dem_simple < 1] = 0
+dem_simple = binary_fill_holes(dem_simple).astype(int)
+
+outfile = temp_dir + '/upstream.asc'
+header = readHeader(str(dem_path))
+f = open(outfile, "w")
+f.write(header)
+np.savetxt(f, dem_simple, fmt="%i")
+f.close()
+
+with rasterio.Env():
+    with rasterio.open(outfile) as src:
+        image = src.read()
+        results = (
+            {'properties': {'raster_val': v}, 'geometry': s}
+            for i, (s, v)
+            in enumerate(rasterio.features.shapes(image, transform=src.transform)))
+
+geoms = list(results)
+
+upstream = gpd.GeoDataFrame.from_features(geoms)
+upstream = upstream[upstream.raster_val != 0]
+crs = roi.crs
+upstream = upstream.set_crs(roi.crs)
+upstream.to_file('upstream_ells_mouth.shp')
+
+
+
+
+
+
