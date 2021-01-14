@@ -11,7 +11,7 @@ import geopandas as gpd
 from sklearn.metrics import mean_squared_error as mse
 import matplotlib.pyplot as plt
 import importlib
-importlib.reload(config)
+
 # ======================================================================================================================
 
 temp_dir = tempfile.mkdtemp()
@@ -33,7 +33,6 @@ area = 13.7393  # area of upstream Ellsworth watershed, sq. km
 flow['flow_mm_day'] = (flow['Flow_cfs'] / area) * ft3_sec
 flow.drop('Flow_cfs', axis=1, inplace=True)
 
-
 # Expand date range to include every day of all the years present
 begin = '01-01-{}'.format(flow.index.to_frame()['Date'].min().year)
 end = '12-31-{}'.format(flow.index.to_frame()['Date'].max().year)
@@ -45,46 +44,14 @@ daily_flow = df.merge(flow, left_index=True, right_index=True, how='left')
 daily_flow['year'] = daily_flow.index.year
 daily_flow['doy'] = daily_flow.index.dayofyear
 flow_piv = pd.pivot_table(daily_flow, index=['doy'], columns=['year'], values=['flow_mm_day'])
-flow_piv.plot(subplots=True)
-
-# Add quality scores
-daily_quality = df.merge(quality, left_index=True, right_index=True, how='left')
-daily_quality['year'] = daily_quality.index.year
-daily_quality['doy'] = daily_quality.index.dayofyear
-quality_piv = pd.pivot_table(daily_quality, index=['doy'], columns=['year'], values=['Quality'])
-# quality_piv.plot()
-
-# Highlight unreliable values based on quality column
-# ax = flow_piv.plot(subplots=True)
-
+flow_piv.plot(subplots=True, legend=False)
+plt.ylabel('Flow (mm/day)')
+plt.xlabel('Day of Year')
 
 # =======================================================================
-# Imputing missing data
-# =======================================================================
-# Remove beginning and end of dataset with no monitoring data
-data_start = format(flow.index.to_frame()['Date'].min(), '%Y-%m-%d')
-data_end = format(flow.index.to_frame()['Date'].max(), '%Y-%m-%d')
-
-daily_flow_imp = daily_flow[daily_flow.index >= data_start].copy()
-daily_flow_imp = daily_flow_imp[daily_flow_imp.index <= data_end].copy()
-
-daily_flow_imp['flow_imp'] = daily_flow_imp['flow_mm_day'].interpolate(method='time')
-# daily_flow_imp['imp_slinear'] = daily_flow_imp['flow_mm_day'].interpolate(method='slinear')
-# daily_flow_imp['imp_poly5'] = daily_flow_imp['flow_mm_day'].interpolate(method='polynomial', order=5)
-# daily_flow_imp['imp_spline3'] = daily_flow_imp['flow_mm_day'].interpolate(method='spline', order=3)
-# daily_flow_imp['imp_cubic'] = daily_flow_imp['flow_mm_day'].interpolate(method='cubic')
-
-daily_flow_imp.plot(y='flow_imp')
-daily_flow_imp.plot(y=['flow_imp', 'flow_mm_day'])
-
-# Export
-outfile = config.velma_data / 'runoff' / flow_path.name
-daily_flow_imp['flow_imp'].to_csv(outfile, index=False, header=False)
-
-# =======================================================================
-# Imputing missing data through modeling
-# For Ellsworth, only going to model Oct-Dec of 2008,
-# modeling Jan-June of 2003 seems unreliable
+# Imputing missing data through modeling:
+# Ellsworth is missing Jan-Jun of 2003 and Oct-Dec of 2008. Will just remove those years
+# Also missing small gaps from 2004-2007
 # =======================================================================
 # Feature engineering
 precip = pd.read_csv(str(config.daily_ppt), parse_dates=True, index_col=0)
@@ -104,8 +71,8 @@ timestamp_secs = pd.to_datetime(df.index)
 timestamp_secs = timestamp_secs.map(datetime.datetime.timestamp)
 df['year_cos'] = np.cos(timestamp_secs * (2 * np.pi / year))
 df['year_sin'] = np.sin(timestamp_secs * (2 * np.pi / year))
-# plt.plot(np.array(df['year_sin']))
-# plt.plot(np.array(df['year_cos']))
+plt.plot(np.array(df['year_sin']))
+plt.plot(np.array(df['year_cos']))
 # Sum of last 2 days precip
 df['precip_sum-2t'] = precip.rolling(2).sum()
 
@@ -114,7 +81,7 @@ df['precip_t-1'] = precip['mean_ppt_mm'].shift(1)
 df['precip_t-2'] = precip['mean_ppt_mm'].shift(2)
 df['precip_t-3'] = precip['mean_ppt_mm'].shift(3)
 
-obs = df.merge(daily_flow_imp['flow_imp'], left_index=True, right_index=True, how='right')
+obs = df.merge(daily_flow['flow_mm_day'], left_index=True, right_index=True, how='right')
 
 # Plot streamflow and variables
 
@@ -123,27 +90,30 @@ obs_plot = obs.copy()
 obs_plot['year'] = obs_plot.index.year
 obs_plot['doy'] = obs_plot.index.dayofyear
 fig, axes = plt.subplots(nrows=2)
-obs_plot[obs_plot['year'] == 2004]['flow_imp'].plot(ax=axes[0])
+obs_plot[obs_plot['year'] == 2004]['flow_mm_day'].plot(ax=axes[0])
 obs_plot[obs_plot['year'] == 2004]['mean_ppt_mm'].plot(ax=axes[1])
+
+# Set aside dates with missing flow measurements
+gap_data = obs[obs['flow_mm_day'].isna()]
+obs.dropna(inplace=True)
 # ========================================================
 
 
 def plot_test_results(y_test, y_pred):
     results = pd.DataFrame(data=np.column_stack([y_test, y_pred]), index=y_test.index, columns=['y_test', 'y_pred'])
-    results = (results * train_std['flow_imp']) + train_mean['flow_imp']
+    results = (results * train_std['flow_mm_day']) + train_mean['flow_mm_day']
     plt.plot(results)
     plt.legend(results.columns)
 
 
 # Split the data 70-20-10
 n = obs.shape[0]
-# obs = obs.sample(frac=1)
 train_df = obs[0:int(n*0.7)]
 test_df = obs[int(n*0.7):]
 num_features = obs.shape[1]
 
 cols = obs.columns.tolist()
-target = cols.index('flow_imp')
+target = cols.index('flow_mm_day')
 
 # Normalize
 train_mean = train_df.mean()
@@ -164,46 +134,56 @@ print(mse(y_test, y_pred))
 plot_test_results(y_test, y_pred)
 
 # ========================================================
-# Predicting missing months of 2008
-from datetime import timedelta
-gap_start = pd.to_datetime(data_end) + timedelta(days=1)
-gap_end = pd.to_datetime(end)
+# Predicting small data gaps from 2004-2007
 
-X_gap = df[(df.index >= gap_start) & (df.index <= gap_end)]
-X_gap = (X_gap - train_mean[:-1]) / train_std[:-1]
-
-gap_pred = svr.predict(X_gap)
-gap_pred = (gap_pred * train_std['flow_imp']) + train_mean['flow_imp']
-
-preds = pd.DataFrame(data=gap_pred, index=pd.date_range(gap_start, gap_end), columns=['flow_pred'])
-
-# Plot estimated streamflow
-plt.plot(obs['flow_imp'], label='Observed')
-plt.plot(preds['flow_pred'], label='Modeled')
-plt.legend()
-
-
-data_begin = pd.to_datetime('01-01-2004')
-df_all = df[(df.index >= data_begin) & (df.index <= gap_end)]
-df_all.plot(subplots=True)
-# ========================================================
-# Export runoff
-
-
-# ========================================================
-# Alternatively, just export the full years (non-modeled) with imputed streamflow
 velma_start = pd.to_datetime('01-01-2004')
 velma_end = pd.to_datetime('12-31-2007')
-runoff_velma = obs[(obs.index >= velma_start) & (obs.index <= velma_end)]['flow_imp']
+gap_data_04_07 = gap_data[(gap_data.index >= velma_start) & (gap_data.index <= velma_end)].copy()
+
+X_gap = gap_data_04_07.drop(columns='flow_mm_day', axis=1)
+X_gap = (X_gap - train_mean[:-1]) / train_std[:-1]
+gap_pred = svr.predict(X_gap)
+gap_pred = (gap_pred * train_std['flow_mm_day']) + train_mean['flow_mm_day']
+
+# Add dates to predicted flow
+rng = pd.date_range(velma_start, velma_end)
+date_df = pd.DataFrame(index=rng)
+obs_04_07 = date_df.merge(obs, left_index=True, right_index=True, how='left')
+
+gap_data_04_07['flow_mm_day'] = gap_pred
+imp_04_07 = date_df.merge(gap_data_04_07, left_index=True, right_index=True, how='left')
+
+plt.plot(obs_04_07['flow_mm_day'], label='Observed')
+plt.plot(imp_04_07['flow_mm_day'], label='Modeled')
+plt.legend()
+
+# Combine the data
+data_04_07 = pd.concat([obs, gap_data_04_07]).sort_index()
+
+# ========================================================
+# # Export runoff and precip/temp for given time period
+
+# Runoff
+velma_start = pd.to_datetime('01-01-2004')
+velma_end = pd.to_datetime('12-31-2007')
+runoff_velma = data_04_07[(data_04_07.index >= velma_start) & (data_04_07.index <= velma_end)]['flow_mm_day']
 outfile = str(config.velma_data / 'runoff' / 'ellsworth_Q_2004_2007.csv')
+if len(pd.date_range(velma_start, velma_end)) != len(runoff_velma):
+    print('STOP: Duplicates/missing values exist in output file: ', outfile)
 runoff_velma.to_csv(outfile, header=False, index=False)
 
-velma_start = pd.to_datetime('01-01-2004')
+# Precipitation and Temperature
+velma_start = pd.to_datetime('01-01-2003')
 velma_end = pd.to_datetime('12-31-2019')
-precip_velma = obs[(obs.index >= velma_start) & (obs.index <= velma_end)]['mean_ppt_mm']
-outfile = str(config.velma_data / 'precip' / 'ellsworth_ppt_2004_2019.csv')
+precip_velma = df[(df.index >= velma_start) & (df.index <= velma_end)]['mean_ppt_mm']
+outfile = str(config.velma_data / 'precip' / 'ellsworth_ppt_2003_2019.csv')
+if len(pd.date_range(velma_start, velma_end)) != len(precip_velma):
+    print('STOP: Duplicates/missing values exist in output file: ', outfile)
 precip_velma.to_csv(outfile, header=False, index=False)
 
-temp_velma = obs[(obs.index >= velma_start) & (obs.index <= velma_end)]['mean_temp_c']
-outfile = str(config.velma_data / 'temp' / 'ellsworth_temp_2004_2019.csv')
+temp_velma = df[(df.index >= velma_start) & (df.index <= velma_end)]['mean_temp_c']
+outfile = str(config.velma_data / 'temp' / 'ellsworth_temp_2003_2019.csv')
+if len(pd.date_range(velma_start, velma_end)) != len(temp_velma):
+    print('STOP: Duplicates/missing values exist in output file: ', outfile)
 temp_velma.to_csv(outfile, header=False, index=False)
+
