@@ -39,7 +39,6 @@ for sim in sims:
     rmse_05_07 = [np.sqrt(mean_squared_error(runoff[runoff['Year'] > 2004]['runoff_obs'],
                         runoff[runoff['Year'] > 2004]['Runoff_All(mm/day)_Delineated_Average']))]
     r2_rmse = runoff.groupby('Year').apply(r2_rmse_groupby)
-    r2s = r2_rmse.iloc[:, 0]
     rmses = r2_rmse.iloc[:, 1]
 
     # Get results
@@ -50,17 +49,16 @@ for sim in sims:
     NES = hydro_results['Runoff_Nash-Sutcliffe_Coefficient']
     NES_05_07 = [np.mean(NES[1:])]
     sim_obs = hydro_results['Total_Fraction(sim/obs)']
-    metric_stack = np.concatenate([NES_05_07, NES, PET_ratio, AET, AET_rainmelt, sim_obs, r2_05_07, r2s, rmse_05_07, rmses], axis=0)
+    metric_stack = np.concatenate([NES_05_07, NES, r2_05_07, rmse_05_07, rmses, PET_ratio, AET, AET_rainmelt, sim_obs], axis=0)
     row_index = ['NES 05-07',
                  'NES 2004', 'NES 2005', 'NES 2006', 'NES 2007',
+                 'R2 05-07',
+                 'RMSE 05-07',
+                 'RMSE 2004', 'RMSE 2005', 'RMSE 2006', 'RMSE 2007',
                  'AET/PET 2004', 'AET/PET 2005', 'AET/PET 2006', 'AET/PET 2007',
                  'AET 2004', 'AET 2005', 'AET 2006', 'AET 2007',
                  'AET/rain+melt 2004', 'AET/rain+melt 2005', 'AET/rain+melt 2006', 'AET/rain+melt 2007',
-                 'sim/obs 2004', 'sim/obs 2005', 'sim/obs 2006', 'sim/obs 2007',
-                 'R2 05-07',
-                 'R2 2004', 'R2 2005', 'R2 2006', 'R2 2007',
-                 'RMSE 05-07',
-                 'RMSE 2004', 'RMSE 2005', 'RMSE 2006', 'RMSE 2007']
+                 'sim/obs 2004', 'sim/obs 2005', 'sim/obs 2006', 'sim/obs 2007']
     results_df = pd.DataFrame(data=metric_stack, columns=[sim], index=row_index)
     results_dfs.append(results_df)
 
