@@ -1,4 +1,4 @@
-# Combines the results of all simulations in the results directory into one neat CSV
+# Combine the results of all simulations in the results directory into one neat CSV
 
 import numpy as np
 import pandas as pd
@@ -35,23 +35,28 @@ for sim in sims:
     runoff_obs = pd.read_csv(config.velma_data / 'runoff' / 'ellsworth_Q_2004_2007.csv', names=['runoff_obs'])
     runoff = pd.concat([daily_results[['Year', 'Runoff_All(mm/day)_Delineated_Average']], runoff_obs], axis=1)
     r2_05_07 = [r2_score(runoff[runoff['Year'] > 2004]['runoff_obs'],
-                        runoff[runoff['Year'] > 2004]['Runoff_All(mm/day)_Delineated_Average'])]
+                         runoff[runoff['Year'] > 2004]['Runoff_All(mm/day)_Delineated_Average'])]
     rmse_05_07 = [np.sqrt(mean_squared_error(runoff[runoff['Year'] > 2004]['runoff_obs'],
-                        runoff[runoff['Year'] > 2004]['Runoff_All(mm/day)_Delineated_Average']))]
+                                             runoff[runoff['Year'] > 2004]['Runoff_All(mm/day)_Delineated_Average']))]
     r2_rmse = runoff.groupby('Year').apply(r2_rmse_groupby)
     rmses = r2_rmse.iloc[:, 1]
+
+    # Get NSE from coefficients file - oddly, can't reproduce using an average or NSE equation
+    nse_file = pd.read_csv(sim_dir / 'NashSutcliffeCoefficients.txt', header=None)
+    NSE_05_07 = [float(nse_file.iloc[0].values[0].split('=')[1].split(' ')[0])]
+    rmse_05_07 = [float(nse_file.iloc[1].values[0].split('=')[1].split(' ')[0])]
 
     # Get results
     hydro_results = pd.read_csv(sim_dir / 'AnnualHydrologyResults.csv')
     PET_ratio = hydro_results['Total_(AET/PET)']
     AET = hydro_results['Total_AET(mm)']
     AET_rainmelt = hydro_results['Total_(AET/(Rain+Melt))']
-    NES = hydro_results['Runoff_Nash-Sutcliffe_Coefficient']
-    NES_05_07 = [np.mean(NES[1:])]
+    NSE = hydro_results['Runoff_Nash-Sutcliffe_Coefficient']
     sim_obs = hydro_results['Total_Fraction(sim/obs)']
-    metric_stack = np.concatenate([NES_05_07, NES, r2_05_07, rmse_05_07, rmses, PET_ratio, AET, AET_rainmelt, sim_obs], axis=0)
-    row_index = ['NES 05-07',
-                 'NES 2004', 'NES 2005', 'NES 2006', 'NES 2007',
+    metric_stack = np.concatenate([NSE_05_07, NSE, r2_05_07, rmse_05_07, rmses, PET_ratio, AET, AET_rainmelt, sim_obs],
+                                  axis=0)
+    row_index = ['NSE 05-07',
+                 'NSE 2004', 'NSE 2005', 'NSE 2006', 'NSE 2007',
                  'R2 05-07',
                  'RMSE 05-07',
                  'RMSE 2004', 'RMSE 2005', 'RMSE 2006', 'RMSE 2007',
@@ -65,8 +70,8 @@ for sim in sims:
     # Get configuration parameters
     config_params = pd.read_csv(sim_dir / 'SimulationConfiguration.csv', names=['param', 'value'])
 
-    param_names = ['be', 'Ks_siltyclayloam', 'ksl1', 'ksv1',
-                   'Ks_siltloam', 'ksl2', 'ksv2', 'soil_depth']
+    param_names = ['be', 'Ks_siltyclayloam', 'ksl_siltyclayloam', 'ksv_siltyclayloam',
+                   'Ks_siltloam', 'ksl_siltloam', 'ksv_siltloam', 'soil_depth']
 
     param_keys = ['/calibration/VelmaCalibration.properties/be', '/soil/siltyclayloam/surfaceKs',
                   '/soil/siltyclayloam/ksLateralExponentialDecayFactor',
@@ -85,5 +90,6 @@ params = pd.concat(params_dfs, axis=1)
 results = pd.concat(results_dfs, axis=1)
 output = pd.concat([results, params], axis=0)
 output.to_csv(results_dir / 'simulation_metrics.csv')
+
 
 
