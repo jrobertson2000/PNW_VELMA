@@ -11,6 +11,8 @@ results_dir = config.velma_data.parents[1] / 'results'
 xml_dir = config.velma_data.parents[1] / 'velma' / 'xml'
 
 sims = natsorted(next(os.walk(results_dir))[1])
+removed = ['ellsworth_baseline_03_07', 'ellsworth_baseline_03_07_2']
+sims = [x for x in sims if x not in removed]
 
 results_dfs = []
 params_dfs = []
@@ -22,6 +24,7 @@ def r2_rmse_groupby(g):
     return pd.Series(dict(r2=r2, rmse=rmse))
 
 
+n_runoff_years = 4
 for sim in sims:
     print(sim)
     sim_dir = results_dir / sim
@@ -33,32 +36,29 @@ for sim in sims:
     daily_results = pd.read_csv(sim_dir / 'DailyResults.csv')
     daily_results = daily_results[daily_results['Year'] <= 2007]
     runoff_obs = pd.read_csv(config.velma_data / 'runoff' / 'ellsworth_Q_2004_2007.csv', names=['runoff_obs'])
+    # Padding with empty rows for simulations using dummy runoff years
+    n = len(daily_results) - len(runoff_obs)
+    runoff_obs = pd.concat([pd.DataFrame([0] * n, columns=['runoff_obs']), runoff_obs], axis=0).reset_index()
     runoff = pd.concat([daily_results[['Year', 'Runoff_All(mm/day)_Delineated_Average']], runoff_obs], axis=1)
-    r2_05_07 = [r2_score(runoff[runoff['Year'] > 2004]['runoff_obs'],
-                         runoff[runoff['Year'] > 2004]['Runoff_All(mm/day)_Delineated_Average'])]
-    rmse_05_07 = [np.sqrt(mean_squared_error(runoff[runoff['Year'] > 2004]['runoff_obs'],
-                                             runoff[runoff['Year'] > 2004]['Runoff_All(mm/day)_Delineated_Average']))]
     r2_rmse = runoff.groupby('Year').apply(r2_rmse_groupby)
-    rmses = r2_rmse.iloc[:, 1]
+    rmses = r2_rmse.iloc[-n_runoff_years:, 1]
 
     # Get NSE from coefficients file - oddly, can't reproduce using an average or NSE equation
     nse_file = pd.read_csv(sim_dir / 'NashSutcliffeCoefficients.txt', header=None)
-    NSE_05_07 = [float(nse_file.iloc[0].values[0].split('=')[1].split(' ')[0])]
-    rmse_05_07 = [float(nse_file.iloc[1].values[0].split('=')[1].split(' ')[0])]
+    NSE_tot = [float(nse_file.iloc[0].values[0].split('=')[1].split(' ')[0])]
+    rmse_tot = [float(nse_file.iloc[1].values[0].split('=')[1].split(' ')[0])]
 
     # Get results
     hydro_results = pd.read_csv(sim_dir / 'AnnualHydrologyResults.csv')
-    PET_ratio = hydro_results['Total_(AET/PET)']
-    AET = hydro_results['Total_AET(mm)']
-    AET_rainmelt = hydro_results['Total_(AET/(Rain+Melt))']
-    NSE = hydro_results['Runoff_Nash-Sutcliffe_Coefficient']
-    sim_obs = hydro_results['Total_Fraction(sim/obs)']
-    metric_stack = np.concatenate([NSE_05_07, NSE, r2_05_07, rmse_05_07, rmses, PET_ratio, AET, AET_rainmelt, sim_obs],
-                                  axis=0)
-    row_index = ['NSE 05-07',
+    PET_ratio = hydro_results['Total_(AET/PET)'].iloc[-n_runoff_years:]
+    AET = hydro_results['Total_AET(mm)'].iloc[-n_runoff_years:]
+    AET_rainmelt = hydro_results['Total_(AET/(Rain+Melt))'].iloc[-n_runoff_years:]
+    NSE = hydro_results['Runoff_Nash-Sutcliffe_Coefficient'].iloc[-n_runoff_years:]
+    sim_obs = hydro_results['Total_Fraction(sim/obs)'].iloc[-n_runoff_years:]
+    metric_stack = np.concatenate([NSE_tot, NSE, rmse_tot, rmses, PET_ratio, AET, AET_rainmelt, sim_obs], axis=0)
+    row_index = ['NSE_tot',
                  'NSE 2004', 'NSE 2005', 'NSE 2006', 'NSE 2007',
-                 'R2 05-07',
-                 'RMSE 05-07',
+                 'RMSE_tot',
                  'RMSE 2004', 'RMSE 2005', 'RMSE 2006', 'RMSE 2007',
                  'AET/PET 2004', 'AET/PET 2005', 'AET/PET 2006', 'AET/PET 2007',
                  'AET 2004', 'AET 2005', 'AET 2006', 'AET 2007',
