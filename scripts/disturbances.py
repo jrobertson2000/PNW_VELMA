@@ -12,20 +12,21 @@ import tempfile
 from soil_merger import readHeader
 # ======================================================================================================================
 # Create temp directory for intermediary files
-temp_dir = tempfile.mkdtemp()
+tmp_dir = tempfile.mkdtemp()
 
 # cover_id is a map of cover_ids created in cover_rasterize_stands.py corresponding to stands, no management buffer (0),
 # and water/area outside of watershed (1)
-cover_id_path = str(config.cover_id_velma.parents[0] / 'filtermap.asc')
-cover_id = np.loadtxt(cover_id_path, skiprows=6)
-# These are the VELMA_IDs of the Ellsworth Experimental Basins
-basin_ids = pd.read_csv(str(config.cover_id_velma.parents[0] / 'experimental_basin_velma_id.csv'))
-
 filter_dir = config.cover_id_velma.parents[0] / 'filter_maps'
 try:
     filter_dir.mkdir(parents=True)
 except FileExistsError:
     pass
+cover_id_path = str(filter_dir / 'filtermap.asc')
+cover_id = np.loadtxt(cover_id_path, skiprows=6)
+# These are the VELMA_IDs of the Ellsworth Experimental Basins
+basin_ids = pd.read_csv(str(config.cover_id_velma.parents[0] / 'experimental_basin_velma_id.csv'))
+
+
 
 # =======================================================================
 # Disturbances
@@ -45,7 +46,6 @@ def create_filter_map(disturbance_name, exclude, include):
     np.savetxt(f, filter_map, fmt='%i')
     f.close()
     return filter_map
-
 
 # ===================================
 disturbance = 'industrial_clearcut'

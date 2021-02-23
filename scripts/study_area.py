@@ -17,7 +17,7 @@ import importlib
 importlib.reload(config)
 # ======================================================================================================================
 
-temp_dir = tempfile.mkdtemp()
+tmp_dir = tempfile.mkdtemp()
 
 # =======================================================================
 # Rasterize study area and convert to binary mask
@@ -59,7 +59,7 @@ dem_simple[dem_simple > 1] = 1
 dem_simple[dem_simple < 1] = 0
 dem_simple = binary_fill_holes(dem_simple).astype(int)
 
-outfile = temp_dir + '/upstream.asc'
+outfile = tmp_dir + '/upstream.asc'
 header = readHeader(str(dem_path))
 f = open(outfile, "w")
 f.write(header)

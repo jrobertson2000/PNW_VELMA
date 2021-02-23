@@ -21,49 +21,61 @@ env.workspace = str(config.data_path)
 arcpy.env.overwriteOutput = True
 
 # Create temp directory for intermediary files
-temp_dir = tempfile.mkdtemp()
+tmp_dir = tempfile.mkdtemp()
 
 # =======================================================================================
-# Resample Ellsworth DEM from 1m to 10m, then mosaic with DEM data outside of study area
+# Resample DEM to desired resolution, then mosaic with DEM data outside of study area to
+# get a rectangular raster with no missing data
 # =======================================================================================
 
-dem_raw = str(config.dem_raw)
-dem_resamp = temp_dir + '/dem_resamp.tif'
-dem_resamp_clip = temp_dir + '/dem_resamp_clip.tif'
+input_dems = ['elevEllsworth_2019roads_on_2007dtm', 'els_dtm2019_fin', 'elevEllsworth_2007roads_on_2019dtm',
+              'els_dtm2019_clip100ft', 'els_dtm_2007_fin', 'els_dtm2007_clip100ft']
+
+dem_dir = config.data_path / 'topography' / 'ellsworth' / 'Ellsworth_Elevation_Products.gdb'
+output_dir = config.data_path / 'topography' / 'ellsworth' / 'Ellsworth_Elevation_Products_5m_merged'
+
+try:
+    Path(output_dir).mkdir(parents=True)
+except WindowsError:
+    pass
 
 # Get extent of study area
 study_area = str(config.study_area)
-roi = getROI(study_area, dem_raw, temp_dir)
+proj = str(config.proj_wkt)
+roi = getROI(study_area, tmp_dir, proj)
 extent = arcpy.Describe(roi.roi).extent
 envelope = '{} {} {} {}'.format(extent.XMin, extent.YMin, extent.XMax, extent.YMax)
 
-# Resample study area DEM
-arcpy.Resample_management(in_raster=dem_raw, out_raster=dem_resamp, cell_size="10 10", resampling_type="CUBIC")
+for ds in input_dems:
+    dem_raw = str(dem_dir / ds)
+    dem = str(output_dir / '{}.asc'.format(ds))
 
-dem_border = str(config.dem_border)
-dem_border_proj = temp_dir + '/dem_border_proj.tif'
-dem_border_clip = temp_dir + '/dem_border_clip.tif'
-dem = str(config.dem)  # Final output DEM
+    # Resample base DEM to desired projection and cell size
+    dem_resamp = tmp_dir + '/dem_resamp.tif'
+    arcpy.ProjectRaster_management(in_raster=dem_raw, out_raster=dem_resamp, out_coor_system=proj,
+                                   resampling_type='CUBIC', cell_size=config.cell_size)
 
-# Get cell size of DEM
-x = arcpy.GetRasterProperties_management(dem_resamp, 'CELLSIZEX').getOutput(0)
-y = arcpy.GetRasterProperties_management(dem_resamp, 'CELLSIZEY').getOutput(0)
-xy = '{} {}'.format(x, y)
-proj = arcpy.Describe(dem_resamp).spatialReference
+    # Clip base DEM to study area
+    dem_resamp_clip = tmp_dir + '/dem_resamp_clip.tif'
+    arcpy.Clip_management(in_raster=dem_resamp, out_raster=dem_resamp_clip, rectangle=envelope, nodata_value=-9999)
 
-# Clip base DEM to study area
-arcpy.Clip_management(in_raster=dem_resamp, out_raster=dem_resamp_clip, rectangle=envelope, nodata_value=-9999)
+    # Reproject, clip, and mosaic border DEM
+    dem_border = str(config.dem_border)
+    dem_border_proj = tmp_dir + '/dem_border_proj.tif'
+    arcpy.ProjectRaster_management(in_raster=dem_border, out_raster=dem_border_proj, out_coor_system=proj,
+                                   resampling_type='CUBIC', cell_size=config.cell_size)
 
-# Reproject, clip, and mosaic border DEM
-arcpy.ProjectRaster_management(in_raster=dem_border, out_raster=dem_border_proj, out_coor_system=proj,
-                               resampling_type='CUBIC',
-                               cell_size=xy)
+    # Mosaic base DEM with border DEM
+    arcpy.Mosaic_management([dem_resamp_clip, dem_border_proj], target=dem_border_proj, mosaic_type='FIRST')
+    # arcpy.management.Delete(dem_resamp_clip)
 
-arcpy.Mosaic_management([dem_resamp_clip, dem_border_proj], target=dem_border_proj, mosaic_type='FIRST')
+    # Clip mosaicked DEM
+    dem_border_clip = tmp_dir + '/dem_border_clip.tif'
+    arcpy.Clip_management(in_raster=dem_border_proj, out_raster=dem_border_clip, rectangle=envelope, nodata_value=-9999)
 
-arcpy.Clip_management(in_raster=dem_border_proj, out_raster=dem_border_clip, rectangle=envelope, nodata_value=-9999)
-
-arcpy.RasterToASCII_conversion(in_raster=dem_border_clip, out_ascii_file=dem)
+    # Export
+    arcpy.RasterToASCII_conversion(in_raster=dem_border_clip, out_ascii_file=dem)
+    # arcpy.management.Delete(dem_border_clip)
 
 
 

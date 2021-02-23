@@ -46,7 +46,6 @@ stands_path = str(config.cover_type_velma)
 cover_key = pd.read_csv(str(config.cover_type_velma.parents[0] / 'cover_type_key.csv'))
 nlcd = np.loadtxt(nlcd_path, skiprows=6)
 
-
 nlcd = nlcd + 100
 
 # NLCD class values
@@ -65,11 +64,6 @@ nlcd_woody_wet = 190
 nlcd_emerg_herb_wet = 195
 
 # ================================
-# Impervious layer
-imperv_path = str(config.imperv_velma)
-imperv = np.loadtxt(imperv_path, skiprows=6)
-
-# ================================
 # Convert and merge landcover classes
 
 # Stand class values
@@ -78,42 +72,38 @@ bpa_id = cover_key.loc[cover_key['type'] == 'BPA', 'id'].iloc[0]
 nf_id = cover_key.loc[cover_key['type'] == 'NF', 'id'].iloc[0]
 conifer_id = cover_key.loc[cover_key['type'] == 'conifer', 'id'].iloc[0]
 
-# Convert CCAP developed to dirt
-ccap[(ccap == ccap_developed)] = ccap_dirt
+# Replace CCAP developed and dirt with conifer
+ccap[(ccap == ccap_developed)] = conifer_id
 
-# Replace forest values of ccap with stand types
-ccap[(ccap == ccap_forest)] = stands[(ccap == ccap_forest)]
+# Replace CCAP forest with conifer
+ccap[(ccap == ccap_forest)] = conifer_id
 
-# Replace bare, bpa, and nf that were in stands with CCAP dirt value
-ccap[(ccap == bare_id)] = ccap_dirt
-ccap[(ccap == bpa_id)] = ccap_dirt
-ccap[(ccap == nf_id)] = ccap_dirt
+# Replace bare, bpa, and nf that were in stands with conifer
+ccap[(ccap == bare_id)] = conifer_id
+ccap[(ccap == bpa_id)] = conifer_id
+ccap[(ccap == nf_id)] = conifer_id
 
 # Overlay NLCD deciduous forests on CCAP
 ccap[(nlcd == nlcd_forest_decid)] = nlcd_forest_decid
 
-# Convert CCAP shrub and herbaceous to dirt for now
-ccap[(ccap == ccap_herby)] = ccap_dirt
-ccap[(ccap == ccap_shrub)] = ccap_dirt
-
-# Erode NLCD roads by 1 pixel - they look to be about 10-20m, not 30m
-road_mask = (nlcd == nlcd_dev_openspace) + (nlcd == nlcd_dev_low)
-roads = ndimage.binary_erosion(road_mask, iterations=1)
-
-# Replace developed/dirt pixels with nearest neighbor
-x, y = np.mgrid[0:nlcd.shape[0], 0:nlcd.shape[1]]
-xygood = np.array((x[~road_mask], y[~road_mask])).T
-xybad = np.array((x[road_mask], y[road_mask])).T
-ccap_eroded = ccap.copy()
-ccap_eroded[road_mask] = ccap_eroded[~road_mask][KDTree(xygood).query(xybad)[1]]
-
-# Overlay new eroded roads from NLCD onto CCAP
-ccap[roads] = ccap_dirt
+# Replace CCAP shrub, herbaceous, dirt, and water with conifer
+ccap[(ccap == ccap_herby)] = conifer_id
+ccap[(ccap == ccap_shrub)] = conifer_id
+ccap[(ccap == ccap_dirt)] = conifer_id
+ccap[(ccap == ccap_water)] = conifer_id
 
 header = readHeader(stands_path)
 f = open(outfile, "w")
 f.write(header)
 np.savetxt(f, ccap, fmt="%i")
+f.close()
+
+# Create cover type map that is just conifer
+conifer = (ccap * 0) + 1
+outfile = config.cover_type_ccap_merge_velma.parents[0] / 'conifer.asc'
+f = open(outfile, "w")
+f.write(header)
+np.savetxt(f, conifer, fmt='%i')
 f.close()
 
 # # Merge key files

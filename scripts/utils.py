@@ -17,16 +17,15 @@ if sys.version_info[0] < 3:
     arcpy.CheckOutExtension('Spatial')
 
     class getROI:
-        def __init__(self, roi, dem_in, temp_dir):
+        def __init__(self, roi, tmp_dir, proj_wkt):
             self.roi = roi
-            self.roi_buff = temp_dir + '/roi_buff.shp'
-            self.roi_reproj = temp_dir + '/roi_reproj.shp'
+            self.roi_buff = tmp_dir + '/roi_buff.shp'
+            self.roi_reproj = tmp_dir + '/roi_reproj.shp'
 
-            arcpy.Project_management(in_dataset=roi, out_dataset=self.roi_reproj,
-                                     out_coor_system=arcpy.Describe(dem_in).spatialReference)
+            arcpy.Project_management(in_dataset=roi, out_dataset=self.roi_reproj, out_coor_system=proj_wkt)
             arcpy.CopyFeatures_management(self.roi_reproj, roi)
             arcpy.Buffer_analysis(in_features=roi, out_feature_class=self.roi_buff,
-                                  buffer_distance_or_field="15 Kilometers",
+                                  buffer_distance_or_field="3 Kilometers",
                                   line_side="FULL", line_end_type="ROUND", dissolve_option="NONE", dissolve_field="",
                                   method="PLANAR")
 
@@ -43,18 +42,18 @@ if sys.version_info[0] < 3:
             self.extent = arcpy.sa.Raster(dem_velma).extent
 
 
-    def reshape(in_path, out_path, name, resamp_type, dem_specs, temp_dir, roi_layers):
+    def reshape(in_path, out_path, name, resamp_type, dem_specs, cell_size, proj, tmp_dir, roi_layers):
         print('Prepping ' + name + ' ...')
         arcpy.env.snapRaster = dem_specs.dem
         file_in = str(in_path)
-        buff = temp_dir + '/buff.tif'
-        reproj = temp_dir + '/reproj.tif'
+        buff = tmp_dir + '/buff.tif'
+        reproj = tmp_dir + '/reproj.tif'
         file_out = str(out_path)
         arcpy.Clip_management(in_raster=file_in, out_raster=buff, in_template_dataset=roi_layers.roi_buff,
                               clipping_geometry=True)
-        arcpy.ProjectRaster_management(in_raster=buff, out_raster=reproj, out_coor_system=dem_specs.spatial_ref,
+        arcpy.ProjectRaster_management(in_raster=buff, out_raster=reproj, out_coor_system=proj,
                                        resampling_type=resamp_type,
-                                       cell_size=dem_specs.xy)
+                                       cell_size=cell_size)
         envelope = '{} {} {} {}'.format(dem_specs.extent.XMin, dem_specs.extent.YMin, dem_specs.extent.XMax,
                                         dem_specs.extent.YMax)
         arcpy.Clip_management(in_raster=reproj, out_raster=file_out, rectangle=envelope, nodata_value=-9999)
@@ -88,12 +87,12 @@ if sys.version_info[0] >= 3:
             self.raster_header = None
             self.raster = None
 
-        def get_flowlines_ascii(self, temp_dir):
+        def get_flowlines_ascii(self, tmp_dir):
             cols = self.shp.columns.to_list()
             cols.remove('geometry')
             flow = self.shp.drop(cols, axis=1)
             flow['value'] = 1
-            self.raster_path = temp_dir + '/flow_raster.asc'
+            self.raster_path = tmp_dir + '/flow_raster.asc'
 
             dem_file = str(config.dem_velma)
 

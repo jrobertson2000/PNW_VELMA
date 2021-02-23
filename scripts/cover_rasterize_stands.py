@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import rasterio
+import osr
 from rasterio import features
 from utils import flowlines
 from pathlib import Path
@@ -21,7 +22,7 @@ importlib.reload(config)
 # =======================================================================
 
 # Create temp directory for intermediary files
-temp_dir = tempfile.mkdtemp()
+tmp_dir = tempfile.mkdtemp()
 
 filter_dir = config.cover_id_velma.parents[0] / 'filter_maps'
 
@@ -68,17 +69,16 @@ stand_shp.insert(0, 'VELMA_ID', range(1, len(stand_shp)+1))
 stand_shp_csv = pd.DataFrame(stand_shp.drop(columns='geometry'))
 stand_shp_csv.to_csv(config.cover_id_velma.parents[0] / 'disturbance_map.csv', index=False)
 
-# Reproject to DEM crs
-dem_file = str(config.dem_raw)
-with rasterio.open(dem_file, 'r') as src:
-    dem_crs = src.crs.to_string()
-stand_shp = stand_shp.to_crs(dem_crs)
+# Reproject to target CRS
+proj = open(config.proj_wkt, 'r').read()
+stand_shp = stand_shp.to_crs(proj)
 updated_shp = config.stand_shp.parents[0] / 'Ellsworth_Stands_updated.shp'
 stand_shp.to_file(updated_shp)
 
 # Convert vector to raster (stand type)
 stand_type = str(config.cover_type)
 # Take DEM and set all values to NaN, then burn species shp into empty DEM raster
+dem_file = config.dem_velma
 with rasterio.open(dem_file, 'r') as src:
     in_arr = src.read(1)
     in_arr[:] = -9999
@@ -88,6 +88,7 @@ with rasterio.open(dem_file, 'r') as src:
         shapes = ((geom, value) for geom, value in zip(stand_shp.geometry, stand_shp.SPECIES_ID))
         burned = features.rasterize(shapes=shapes, fill=np.nan, out=in_arr, transform=out.transform)
         out.write_band(1, burned)
+        out.crs = proj
 
 # Convert vector to raster (stand age)
 stand_age = str(config.cover_age)
@@ -101,6 +102,7 @@ with rasterio.open(dem_file, 'r') as src:
         shapes = ((geom, value) for geom, value in zip(stand_shp.geometry, stand_shp.Age_2020))
         burned = features.rasterize(shapes=shapes, fill=np.nan, out=in_arr, transform=out.transform)
         out.write_band(1, burned)
+        out.crs = proj
 
 # Convert vector to raster (stand ID)
 stand_id = str(config.cover_id)
@@ -114,11 +116,12 @@ with rasterio.open(dem_file, 'r') as src:
         shapes = ((geom, value) for geom, value in zip(stand_shp.geometry, stand_shp.VELMA_ID))
         burned = features.rasterize(shapes=shapes, fill=np.nan, out=in_arr, transform=out.transform)
         out.write_band(1, burned)
+        out.crs = proj
 
 # WA requires a 10 meter no-management buffer around all streams, so will add those in with ID=0
 # Create flowlines raster and buffer it by 1 cell (10m/30ft)
 flow = flowlines(config.flowlines)
-flow.get_flowlines_ascii(temp_dir)
+flow.get_flowlines_ascii(tmp_dir)
 no_mgmt_buffer = ndimage.binary_dilation(flow.raster, iterations=1)
 
 # Overlay buffer on cover ID map and export
@@ -126,7 +129,11 @@ cover_ids = np.loadtxt(str(config.cover_id_velma), skiprows=6)  # Each stand has
 cover_ids[no_mgmt_buffer] = 0
 
 outfile = str(filter_dir / 'filtermap.asc')
-header = readHeader(str(config.cover_id_velma))
+try:
+    filter_dir.mkdir(parents=True)
+except WindowsError:
+    pass
+header = readHeader(str(config.dem_velma))
 f = open(outfile, "w")
 f.write(header)
 np.savetxt(f, cover_ids, fmt="%i")

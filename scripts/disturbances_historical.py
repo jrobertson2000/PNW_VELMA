@@ -31,7 +31,7 @@ yearly_loss = np.loadtxt(yearly_loss_path, skiprows=6)
 years = np.unique(yearly_loss).tolist()
 years.remove(0)
 
-outfiles = [filter_dir / 'historical_clearcut_{}.asc'.format(2000 + year) for year in years]
+outfiles = [filter_dir / 'historical_clearcut_{}.asc'.format(2000 + int(year)) for year in years]
 
 header = readHeader(yearly_loss_path)
 
@@ -43,7 +43,7 @@ for i, year in enumerate(years):
     f.close()
 
 # =======================================================================
-# Create historical cover age map corresponding to 2004
+# Create historical cover age map corresponding to start year
 cover_age20_path = config.cover_age_velma
 cover_age20 = np.loadtxt(cover_age20_path, skiprows=6)
 
@@ -68,15 +68,14 @@ np.savetxt(f, cover_age20_updated, fmt="%i")
 f.close()
 
 # But a more accurate map is one that adjusts age based on when it starts
-# This assumes that a pixel is cut at 40 years
+# This assumes that a forest pixel is cut at 40 years
 start_year = 2004
-diff = 2020-2004
+diff = 2020 - start_year
 historical_age = cover_age20_updated - diff
 historical_age[historical_age <= 0] = historical_age[historical_age <= 0] + 40
 
-outfile = config.cover_age.parents[0] / 'historical_age_{}.asc'.format(start_year)
+outfile = config.cover_age_velma.parents[0] / 'historical_age_{}.asc'.format(start_year)
 f = open(outfile, 'w')
 f.write(header)
 np.savetxt(f, historical_age, fmt='%i')
 f.close()
-

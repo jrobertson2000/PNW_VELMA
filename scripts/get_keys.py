@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import imp
 import errno
+from soil_merger import mergeSoils
 imp.reload(config)
 
 # ======================================================================================================================
@@ -18,39 +19,77 @@ env.workspace = str(config.data_path)
 arcpy.env.overwriteOutput = True
 
 # Create temp directory for intermediary files
-temp_dir = tempfile.mkdtemp()
+tmp_dir = tempfile.mkdtemp()
 temp_gdb = 'temp.gdb'
-arcpy.CreateFileGDB_management(temp_dir, temp_gdb)
+arcpy.CreateFileGDB_management(tmp_dir, temp_gdb)
 
 # =======================================================================
-# Get soil classes and soil column depth
+# Soil
 # =======================================================================
-# Join raster to valu1 table in gSSURGO.gdb, get total soil depth (tk0_999a)
+# Merge gSSURGO and STATSGO2 ascii files
+
+gssurgo = str(config.gssurgo_out)
+gssurgo_temp = tmp_dir + '/gssurgo.asc'
+
+statsgo2 = str(config.statsgo2_out)
+statsgo2_temp = tmp_dir + '/statsgo2.asc'
+
+# Merge soil texture subclasses into classes, assign integer IDs
+fields = ['texcl']
+cursor = arcpy.da.SearchCursor('soil_raster_layer', fields)
+df = pd.DataFrame(data=[row[0] for row in cursor], columns=['texture'])
+
+
+arcpy.RasterToASCII_conversion(in_raster='texture', out_ascii_file=gssurgo_temp)
+
+
+arcpy.RasterToASCII_conversion(in_raster=statsgo2, out_ascii_file=statsgo2_temp)
+
+mergeSoils(gssurgo_temp, statsgo2_temp, str(config.soil_velma))
+
+
+# Merge soil texture subclasses into classes, assign integer IDs
+soil = str(config.soil_out)
+arcpy.MakeRasterLayer_management(in_raster=soil, out_rasterlayer='soil_raster_layer', band_index="1")
+fields = ['texcl']
+cursor = arcpy.da.SearchCursor('soil_raster_layer', fields)
+df = pd.DataFrame(data=[row[0] for row in cursor], columns=['texture'])
+
+subclass_map = {'Loamy coarse sand': 'Loamy sand',
+                'Loamy fine sand': 'Loamy sand',
+                'Loamy very fine sand': 'Loamy sand',
+                'Coarse sandy loam': 'Sandy loam',
+                'Very fine sandy loam': 'Sandy loam',
+                'Fine sandy loam': 'Sandy loam',
+                'Fine sand': 'Sand',
+                'Very fine sand': 'Sand',
+                'Coarse sand': 'Sand',
+                'Silt': 'Silt loam'}
+
+df = pd.DataFrame(data=df['texture'].map(subclass_map).fillna(df['texture']), columns=['texture'])
+df_unique = df['texture'].unique()
+texture_keys = pd.DataFrame(data=np.column_stack([df_unique, np.arange(len(df_unique))+1]), columns=['texture', 'id'], dtype=['string', 'int64'])
+texture_keys['id'][texture_keys['texture'].isnull()] = -9999
+
+texture_keys_file = config.soil_velma.parents[0] / 'soil_class_key.csv'
+texture_keys.to_csv(str(texture_keys_file), index=False)
+
+# Remap
+remap_values = zip(texture_keys['texture'], texture_keys['id'].astype('int'))
+remap_values = arcpy.sa.RemapValue(remap_values)
+remap_values = arcpy.sa.RemapValue([['Silt loam', 1], ['Sandy loam', 2], ['Loam', 3], [None, -9999], ['Loamy sand', 5], ['Sand', 6], ['Sandy clay loam', 7], ['Clay loam', 8], ['Silty clay loam', 9], ['Silty clay', 10], ['Clay', 11]])
+soil_remap = arcpy.sa.Reclassify(in_raster=texture_raster, reclass_field='chtexture.texcl', remap=remap_values)
+soil_remap = arcpy.sa.Reclassify(soil, 'texcl', remap_values, "")
+
+# Save remapped texture raster
+texture_raster = arcpy.sa.Lookup('soil_raster_layer', 'chtexture.texcl')
+
+arcpy.CopyRaster_management('soil_raster_layer', str(config.soil), pixel_type='16_BIT_SIGNED', )
+texture_out.save(str(config.soil))
+
 soil = str(config.soil_out)
 arcpy.MakeRasterLayer_management(in_raster=soil, out_rasterlayer='soil_raster_layer', band_index="1")
 valu1_table = str(Path(soil).parents[0] / 'Valu1')
-
-arcpy.AddJoin_management(in_layer_or_view='soil_raster_layer', in_field='MUKEY', join_table=valu1_table, join_field='MUKEY')
-fields = ['Valu1.MUKEY', 'Valu1.tk0_999a']
-cursor = arcpy.da.SearchCursor('soil_raster_layer', fields)
-df = pd.DataFrame(data=[row for row in cursor], columns=['MUKEY', 'tk0_999a_mm'])
-df['tk0_999a_mm'] = df['tk0_999a_mm'].round(0) * 10
-# Note: Some classes might have NaN values, what to do? Average them? They seem to be very small areas on land
-
-# Get soil classes key
-arcpy.MakeRasterLayer_management(in_raster=soil, out_rasterlayer='soil_raster_layer', band_index="1")
-muaggatt_table = str(Path(soil).parents[0] / 'muaggatt')
-arcpy.AddJoin_management(in_layer_or_view='soil_raster_layer', in_field='MUKEY', join_table=muaggatt_table, join_field='mukey')
-fields = ['muaggatt.MUKEY', 'muaggatt.muname', 'muaggatt.hydgrpdcd', 'muaggatt.drclassdcd']
-cursor = arcpy.da.SearchCursor('soil_raster_layer', fields)
-df = pd.DataFrame(data=[row for row in cursor], columns=['MUKEY', 'Name', 'hydrologic_group', 'drainage_class_dom'])
-soil_key = config.soil_velma.parents[0] / 'soil_class_key.csv'
-df.to_csv(str(soil_key), index=False)
-
-# # To view all fields
-# for field in arcpy.ListFields('soil_raster_layer'):
-#     print("{0} is a type of {1} with a length of {2}"
-#           .format(field.name, field.type, field.length))
 
 # =======================================================================
 # Get landcover classes

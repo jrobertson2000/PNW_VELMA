@@ -14,7 +14,7 @@ import importlib
 
 # ======================================================================================================================
 
-temp_dir = tempfile.mkdtemp()
+tmp_dir = tempfile.mkdtemp()
 
 # =======================================================================
 # Visualizing streamflow
@@ -40,7 +40,7 @@ rng = pd.date_range(begin, end)
 df = pd.DataFrame(index=rng)
 daily_flow = df.merge(flow, left_index=True, right_index=True, how='left')
 
-# Plot
+# Plot available runoff
 daily_flow['year'] = daily_flow.index.year
 daily_flow['doy'] = daily_flow.index.dayofyear
 flow_piv = pd.pivot_table(daily_flow, index=['doy'], columns=['year'], values=['flow_mm_day'])
@@ -53,16 +53,27 @@ plt.xlabel('Day of Year')
 # Ellsworth is missing Jan-Jun of 2003 and Oct-Dec of 2008. Will just remove those years
 # Also missing small gaps from 2004-2007
 # =======================================================================
-# Feature engineering
-precip = pd.read_csv(str(config.daily_ppt), parse_dates=True, index_col=0)
+# Import data and feature engineering
 temp_mean = pd.read_csv(str(config.daily_temp_mean), parse_dates=True, index_col=0)
 temp_mean_min = pd.read_csv(str(config.daily_temp_min), parse_dates=True, index_col=0)
 temp_mean_max = pd.read_csv(str(config.daily_temp_max), parse_dates=True, index_col=0)
-# vap_pres_min = pd.read_csv(str(config.vap_press_min), parse_dates=True, index_col=0)
-# vap_pres_max = pd.read_csv(str(config.vap_press_max), parse_dates=True, index_col=0)
-# dewpoint_temp = pd.read_csv(str(config.dewpoint_temp), parse_dates=True, index_col=0)
-df = pd.concat([precip, temp_mean, temp_mean_min, temp_mean_max], axis=1)
-# df = pd.concat([precip, temp_mean, temp_mean_min, temp_mean_max, vap_pres_min, vap_pres_max, dewpoint_temp], axis=1)
+
+# Using average of PRISM precip and a nearby Naselle rain gauge
+precip_prism = pd.read_csv(str(config.daily_ppt), parse_dates=True, index_col=0)
+gauge_data = pd.read_csv(config.daily_ppt.parents[0] / 'GHCND_USC00455774_1929_2020.csv', parse_dates=True, index_col=5)
+gauge_data['SNOW'].fillna(0, inplace=True)
+gauge_data['SNOW_SWE'] = gauge_data['SNOW'] / 13
+gauge_data['PRCP_TOT'] = gauge_data['PRCP'] + gauge_data['SNOW_SWE']
+precip_gauge = gauge_data[['PRCP_TOT']].copy()
+precip_gauge['PRCP_TOT'] = precip_gauge['PRCP_TOT'].combine_first(precip_prism['mean_ppt_mm'])
+
+prism_start = precip_prism.index.min()
+prism_end = precip_prism.index.max()
+precip_gauge = precip_gauge[(precip_gauge.index >= prism_start) & (precip_gauge.index <= prism_end)].copy()
+
+precip = precip_prism.merge(precip_gauge, left_index=True, right_index=True, how='left')
+precip_mean = pd.DataFrame(precip.mean(axis=1), columns=['ppt'])
+df = pd.concat([precip_mean, temp_mean, temp_mean_min, temp_mean_max], axis=1)
 
 # Convert day of year to signal
 day = 24*60*60
@@ -71,27 +82,16 @@ timestamp_secs = pd.to_datetime(df.index)
 timestamp_secs = timestamp_secs.map(datetime.datetime.timestamp)
 df['year_cos'] = np.cos(timestamp_secs * (2 * np.pi / year))
 df['year_sin'] = np.sin(timestamp_secs * (2 * np.pi / year))
-plt.plot(np.array(df['year_sin']))
-plt.plot(np.array(df['year_cos']))
+
 # Sum of last 2 days precip
-df['precip_sum-2t'] = precip.rolling(2).sum()
+df['precip_sum-2t'] = precip_mean.rolling(2).sum()
 
 # Previous days' precip
-df['precip_t-1'] = precip['mean_ppt_mm'].shift(1)
-df['precip_t-2'] = precip['mean_ppt_mm'].shift(2)
-df['precip_t-3'] = precip['mean_ppt_mm'].shift(3)
+df['precip_t-1'] = precip_mean['ppt'].shift(1)
+df['precip_t-2'] = precip_mean['ppt'].shift(2)
+df['precip_t-3'] = precip_mean['ppt'].shift(3)
 
 obs = df.merge(daily_flow['flow_mm_day'], left_index=True, right_index=True, how='right')
-
-# Plot streamflow and variables
-
-# Plot
-obs_plot = obs.copy()
-obs_plot['year'] = obs_plot.index.year
-obs_plot['doy'] = obs_plot.index.dayofyear
-fig, axes = plt.subplots(nrows=2)
-obs_plot[obs_plot['year'] == 2004]['flow_mm_day'].plot(ax=axes[0])
-obs_plot[obs_plot['year'] == 2004]['mean_ppt_mm'].plot(ax=axes[1])
 
 # Set aside dates with missing flow measurements
 gap_data = obs[obs['flow_mm_day'].isna()]
@@ -153,12 +153,13 @@ obs_04_07 = date_df.merge(obs, left_index=True, right_index=True, how='left')
 gap_data_04_07['flow_mm_day'] = gap_pred
 imp_04_07 = date_df.merge(gap_data_04_07, left_index=True, right_index=True, how='left')
 
-plt.plot(obs_04_07['flow_mm_day'], label='Observed')
-plt.plot(imp_04_07['flow_mm_day'], label='Modeled')
-plt.legend()
-
 # Combine the data
 data_04_07 = pd.concat([obs, gap_data_04_07]).sort_index()
+
+plt.plot(data_04_07['flow_mm_day'], label='Observed')
+# plt.plot(obs_04_07['flow_mm_day'], label='Observed')
+plt.plot(imp_04_07['flow_mm_day'], label='Modeled')
+plt.legend()
 
 # ========================================================
 # # Export runoff and precip/temp for given time period
@@ -172,11 +173,22 @@ if len(pd.date_range(velma_start, velma_end)) != len(runoff_velma):
     print('STOP: Duplicates/missing values exist in output file: ', outfile)
 runoff_velma.to_csv(outfile, header=False, index=False)
 
+# Runoff starting from 2003 (using filler values)
+velma_start = pd.to_datetime('01-01-2003')
+velma_end = pd.to_datetime('12-31-2007')
+rng = pd.date_range(velma_start, velma_end)
+date_df = pd.DataFrame(index=rng)
+data_03_07 = date_df.merge(data_04_07, left_index=True, right_index=True, how='left')['flow_mm_day'].fillna(0)
+outfile = str(config.velma_data / 'runoff' / 'ellsworth_Q_2003_2007.csv')
+if len(pd.date_range(velma_start, velma_end)) != len(data_03_07):
+    print('STOP: Duplicates/missing values exist in output file: ', outfile)
+data_03_07.to_csv(outfile, header=False, index=False)
+
 # Precipitation and Temperature
 velma_start = pd.to_datetime('01-01-2003')
 velma_end = pd.to_datetime('12-31-2019')
-precip_velma = df[(df.index >= velma_start) & (df.index <= velma_end)]['mean_ppt_mm']
-outfile = str(config.velma_data / 'precip' / 'ellsworth_ppt_2003_2019.csv')
+precip_velma = df[(df.index >= velma_start) & (df.index <= velma_end)]['ppt']
+outfile = str(config.velma_data / 'precip' / 'PRISM_gauge_avg_ppt_2003_2019.csv')
 if len(pd.date_range(velma_start, velma_end)) != len(precip_velma):
     print('STOP: Duplicates/missing values exist in output file: ', outfile)
 precip_velma.to_csv(outfile, header=False, index=False)
