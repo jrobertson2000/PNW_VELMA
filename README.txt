@@ -1,3 +1,5 @@
+This project is in-progress - a complete directory map and usage guide to scripts/notebooks will be available upon project completion.
+
 PROJECT DIRECTORY STRUCTURE:
 
 # ===================================================
