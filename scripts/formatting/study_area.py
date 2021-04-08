@@ -3,16 +3,12 @@
 
 import config as config
 import numpy as np
-import pandas as pd
 import geopandas as gpd
 import rasterio
 import tempfile
 from rasterio import features
-from pathlib import Path
-from soil_merger import readHeader
+from soil.soil_merger import readHeader
 from scipy.ndimage.morphology import binary_fill_holes
-from utils import flowlines
-import matplotlib.pyplot as plt
 import importlib
 importlib.reload(config)
 # ======================================================================================================================

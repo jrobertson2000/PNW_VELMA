@@ -9,7 +9,7 @@ import config as config
 import numpy as np
 import pandas as pd
 import tempfile
-from soil_merger import readHeader
+from soil.soil_merger import readHeader
 # ======================================================================================================================
 # Create temp directory for intermediary files
 tmp_dir = tempfile.mkdtemp()

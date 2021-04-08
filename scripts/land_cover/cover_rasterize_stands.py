@@ -6,11 +6,9 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import rasterio
-import osr
 from rasterio import features
 from utils import flowlines
-from pathlib import Path
-from soil_merger import readHeader
+from soil.soil_merger import readHeader
 import tempfile
 from scipy import ndimage
 import importlib

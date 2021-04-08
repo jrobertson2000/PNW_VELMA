@@ -6,11 +6,8 @@ from arcpy import env
 import config as config
 from pathlib import Path
 import tempfile
-import pandas as pd
-import numpy as np
 import imp
-from soil_merger import mergeSoils
-import errno
+from soil.soil_merger import mergeSoils
 from utils import reshape, getDEMspecs, getROI
 
 imp.reload(config)

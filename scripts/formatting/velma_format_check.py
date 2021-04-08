@@ -3,14 +3,7 @@
 
 import config as config
 import numpy as np
-import pandas as pd
-import geopandas as gpd
 import rasterio
-import tempfile
-from rasterio import features
-from pathlib import Path
-import matplotlib.pyplot as plt
-from soil_merger import readHeader
 import importlib
 importlib.reload(config)
 

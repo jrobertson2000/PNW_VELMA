@@ -4,8 +4,8 @@
 
 import config as config
 import numpy as np
-from soil_merger import readHeader
-import importlib
+from soil.soil_merger import readHeader
+
 # ======================================================================================================================
 
 # Date of current cover age map

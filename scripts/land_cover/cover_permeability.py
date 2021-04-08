@@ -4,11 +4,10 @@
 import config as config
 import numpy as np
 import pandas as pd
-from scipy.spatial import KDTree
 from scipy import ndimage
-from soil_merger import readHeader
+from soil.soil_merger import readHeader
 import importlib
-import matplotlib.pyplot as plt
+
 importlib.reload(config)
 # ======================================================================================================================
 

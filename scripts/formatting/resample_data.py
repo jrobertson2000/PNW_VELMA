@@ -1,9 +1,8 @@
 
 import config as config
 import os
-import glob
 import rasterio
-from soil_merger import readHeader
+from soil.soil_merger import readHeader
 from rasterio.enums import Resampling
 from pathlib import Path
 # ======================================================================================================================
