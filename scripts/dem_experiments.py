@@ -2,7 +2,7 @@
 # Mosaics DEMS with border DEM outside of study area
 # This is done because JPDEM/VELMA require rasters without NoData cells
 # Note: Ellsworth DEM is already clipped to study area and it's extent is used to clip border DEM
-# Script written in Python 2.7, not compatible with Python 3.X
+# Script written in Python 2.7, not compatible with Python 3
 
 import arcpy
 from arcpy import env

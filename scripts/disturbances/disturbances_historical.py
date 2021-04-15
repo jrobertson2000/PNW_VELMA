@@ -1,4 +1,5 @@
-#
+# Creates filter-maps for VELMA based on historical forest disturbances derived from Hansen Forest Loss dataset
+# Additionally, estimates pre-Hansen disturbances using stand age map and working backwards
 # Script written in Python 3.7
 
 import config as config

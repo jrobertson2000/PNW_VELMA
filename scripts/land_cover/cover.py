@@ -1,4 +1,4 @@
-# Formats NLCD raster to the same projection, resolution, and extent of the DEM
+# Formats cover source rasters (NLCD, CCAP, etc.) to the same projection, resolution, and extent of the DEM
 # Script written in Python 2.7, not compatible with Python 3.X
 
 import arcpy

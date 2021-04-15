@@ -1,3 +1,6 @@
+# Exports temperature and precipitation projections for selected GCMs for a given time period
+# Script written in Python 3.7
+
 import __init__
 import scripts.config as config
 import numpy as np

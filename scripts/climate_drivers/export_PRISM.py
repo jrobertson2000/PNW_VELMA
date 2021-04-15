@@ -1,10 +1,14 @@
+# Exports PRISM temperature and PRISM precipitation averaged with Naselle gauge for a given time period
+# Script written in Python 3.7
+
 import __init__
 import scripts.config as config
 import pandas as pd
 import matplotlib.pyplot as plt
 import mpld3
 import numpy as np
-
+# =======================================================================
+# Config
 start = pd.to_datetime('01-01-1984')
 end = pd.to_datetime('12-31-2020')
 

@@ -1,5 +1,5 @@
 # Formats all input rasters to the same projection, resolution, and extent of the DEM
-# Script written in Python 2.7, not compatible with Python 3.X
+# Script written in Python 2.7, not compatible with Python 3
 
 import arcpy
 from arcpy import env
