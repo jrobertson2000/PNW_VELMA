@@ -48,12 +48,3 @@ try:
 except WindowsError:
     pass
 velma_format(ccap_tmp, config.noaa_ccap_velma)
-
-# NLCD Impervious
-nlcd_imp_tmp = tmp_dir + '/nlcd_imp.tif'
-reshape(config.imperv, nlcd_imp_tmp, 'nlcd_imperv', 'NEAREST', dem_specs, cell_size, proj, tmp_dir, roi_layers)
-try:
-    config.imperv_velma.parents[0].mkdir(parents=True)
-except WindowsError:
-    pass
-velma_format(nlcd_imp_tmp, config.imperv_velma)
