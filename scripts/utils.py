@@ -7,14 +7,13 @@ import sys
 # =======================================================================
 if sys.version_info[0] < 3:
     import arcpy
-    from arcpy import env
-    import tempfile
     import config as config
     import numpy as np
     import imp
 
     imp.reload(config)
     arcpy.CheckOutExtension('Spatial')
+    arcpy.env.overwriteOutput = True
 
     class getROI:
         def __init__(self, roi, tmp_dir, proj_wkt):
@@ -46,6 +45,7 @@ if sys.version_info[0] < 3:
         print('Prepping ' + name + ' ...')
         arcpy.env.snapRaster = dem_specs.dem
         file_in = str(in_path)
+        # buff = tmp_dir + '/buff_{}.tif'.format(name)
         buff = tmp_dir + '/buff.tif'
         reproj = tmp_dir + '/reproj.tif'
         file_out = str(out_path)
@@ -71,10 +71,9 @@ if sys.version_info[0] < 3:
 
 if sys.version_info[0] >= 3:
     import geopandas as gpd
-    import tempfile
     import rasterio
     from rasterio import features
-    from soil_merger import readHeader
+    from soil.soil_merger import readHeader
     import config as config
     import numpy as np
 
