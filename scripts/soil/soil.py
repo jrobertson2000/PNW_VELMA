@@ -1,13 +1,17 @@
 # Creates soil texture map by merging gSSURGO and STATSGO2
 # Script written in Python 2.7, not compatible with Python 3.X
 
+import __init__
+import sys
+import os
+sys.path.append(os.getcwd() + '/scripts/soil')
 import arcpy
 from arcpy import env
 import config as config
 from pathlib import Path
 import tempfile
 import imp
-from soil.soil_merger import mergeSoils
+from soil_merger import mergeSoils
 from utils import reshape, getDEMspecs, getROI
 
 imp.reload(config)
