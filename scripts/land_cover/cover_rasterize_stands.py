@@ -116,25 +116,25 @@ with rasterio.open(dem_file, 'r') as src:
         out.write_band(1, burned)
         out.crs = proj
 
-# WA requires a 10 meter no-management buffer around all streams, so will add those in with ID=0
-# Create flowlines raster and buffer it by 1 cell (10m/30ft)
-flow = flowlines(config.flowlines)
-flow.get_flowlines_ascii(tmp_dir)
-no_mgmt_buffer = ndimage.binary_dilation(flow.raster, iterations=1)
-
-# Overlay buffer on cover ID map and export
-cover_ids = np.loadtxt(str(config.cover_id_velma), skiprows=6)  # Each stand has a different number
-cover_ids[no_mgmt_buffer] = 0
-
-outfile = str(filter_dir / 'filtermap.asc')
-try:
-    filter_dir.mkdir(parents=True)
-except WindowsError:
-    pass
-header = readHeader(str(config.dem_velma))
-f = open(outfile, "w")
-f.write(header)
-np.savetxt(f, cover_ids, fmt="%i")
-f.close()
-
+# # WA requires a 10 meter no-management buffer around all streams, so will add those in with ID=0
+# # Create flowlines raster and buffer it by 1 cell (10m/30ft)
+# flow = flowlines(config.flowlines)
+# flow.get_flowlines_ascii(tmp_dir)
+# no_mgmt_buffer = ndimage.binary_dilation(flow.raster, iterations=1)
+#
+# # Overlay buffer on cover ID map and export
+# cover_ids = np.loadtxt(stand_id, skiprows=6)  # Each stand has a different number
+# cover_ids[no_mgmt_buffer] = 0
+#
+# outfile = str(filter_dir / 'stand_ids.asc')
+# try:
+#     filter_dir.mkdir(parents=True)
+# except WindowsError:
+#     pass
+# header = readHeader(str(config.dem_velma))
+# f = open(outfile, "w")
+# f.write(header)
+# np.savetxt(f, cover_ids, fmt="%i")
+# f.close()
+#
 
