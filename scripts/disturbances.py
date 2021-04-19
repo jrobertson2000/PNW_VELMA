@@ -11,7 +11,7 @@ import pandas as pd
 import tempfile
 from scipy import ndimage
 from utils import flowlines
-from soil.soil_merger import readHeader
+from soil_merger import readHeader
 # ======================================================================================================================
 # Create temp directory for intermediary files
 tmp_dir = tempfile.mkdtemp()

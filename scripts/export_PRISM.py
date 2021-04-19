@@ -9,8 +9,8 @@ import mpld3
 import numpy as np
 # =======================================================================
 # Config
-start = pd.to_datetime('01-01-1984')
-end = pd.to_datetime('12-31-2020')
+start = pd.to_datetime('01-01-2003')
+end = pd.to_datetime('12-31-2019')
 
 # Average PRISM and Naselle gauge precipitation
 gauge = pd.read_csv(config.daily_ppt.parents[0] / 'GHCND_USC00455774_1929_2020.csv', parse_dates=True, index_col=5)

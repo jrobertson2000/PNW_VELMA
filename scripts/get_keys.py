@@ -9,7 +9,6 @@ import tempfile
 import pandas as pd
 import numpy as np
 import imp
-import errno
 from soil_merger import mergeSoils
 imp.reload(config)
 

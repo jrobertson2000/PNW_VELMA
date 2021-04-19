@@ -73,7 +73,7 @@ if sys.version_info[0] >= 3:
     import geopandas as gpd
     import rasterio
     from rasterio import features
-    from soil.soil_merger import readHeader
+    from soil_merger import readHeader
     import config as config
     import numpy as np
 

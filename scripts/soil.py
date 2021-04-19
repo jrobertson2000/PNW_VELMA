@@ -4,7 +4,6 @@
 import __init__
 import sys
 import os
-sys.path.append(os.getcwd() + '/scripts/soil')
 import arcpy
 from arcpy import env
 import config as config

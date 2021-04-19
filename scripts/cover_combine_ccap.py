@@ -4,7 +4,7 @@
 import config as config
 import numpy as np
 import pandas as pd
-from soil.soil_merger import readHeader
+from soil_merger import readHeader
 import importlib
 
 importlib.reload(config)

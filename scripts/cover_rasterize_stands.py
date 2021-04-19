@@ -7,10 +7,7 @@ import pandas as pd
 import geopandas as gpd
 import rasterio
 from rasterio import features
-from utils import flowlines
-from soil.soil_merger import readHeader
 import tempfile
-from scipy import ndimage
 import importlib
 importlib.reload(config)
 # ======================================================================================================================

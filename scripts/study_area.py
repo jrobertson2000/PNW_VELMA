@@ -7,7 +7,7 @@ import geopandas as gpd
 import rasterio
 import tempfile
 from rasterio import features
-from soil.soil_merger import readHeader
+from soil_merger import readHeader
 from scipy.ndimage.morphology import binary_fill_holes
 import importlib
 importlib.reload(config)
