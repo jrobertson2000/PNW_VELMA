@@ -15,7 +15,7 @@ importlib.reload(config)
 # https://code.earthengine.google.com/abedd30c322f12650b6304b597273e9a
 yearly_loss_path = config.yearly_forest_loss_velma
 
-filter_dir = config.cover_id_velma.parents[0] / 'filter_maps'
+filter_dir = config.stand_id_velma.parents[0] / 'filter_maps'
 try:
     filter_dir.mkdir(parents=True)
 except FileExistsError:
@@ -51,7 +51,7 @@ header = readHeader(config.cover_age_velma)
 
 for i, year in enumerate(range(start, end)):
     prehansen_loss = prehansen_cuts[prehansen_years.index(year)]
-    hansen_loss = (hansen_yearly_loss == year) * 1
+    hansen_loss = (hansen_yearly_loss == year % 100) * 1
     total_loss = hansen_loss + prehansen_loss
     if total_loss.sum() > 0:
         print(year)
