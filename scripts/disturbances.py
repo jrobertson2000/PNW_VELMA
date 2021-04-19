@@ -70,7 +70,7 @@ def create_filter_map(disturbance_name, include):
     outfile = filter_dir / '{}.asc'.format(disturbance_name)
     f = open(outfile, 'w')
     f.write(header)
-    np.savetxt(f, filter_map, fmt='%i')
+    # np.savetxt(f, filter_map, fmt='%i')
     f.close()
     return filter_map
 
