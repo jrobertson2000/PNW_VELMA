@@ -5,23 +5,48 @@ from natsort import natsorted
 import config
 import itertools
 import xml.etree.ElementTree as ET
+
 # =======================================================================
 
 xml_root = config.data_path.parents[0] / 'velma' / 'xml'
 
-scenarios = ['baseline', 'historical', 'ind_clearcut', 'restoration_active_all']
+# scenarios = ['baseline', 'historical', 'active_all', 'ind_clearcut']
+scenarios = ['historical']
 
-values_dict = {'calibration/VelmaCalibration.properties/be': 0.95,
-               'soil/siltloam/setSoilLayerWeights': '0.19, 0.22, 0.26, 0.33',
-               'soil/siltloam/surfaceKs': 4000,
-               'soil/siltloam/ksLateralExponentialDecayFactor': 0.00135,
-               'soil/siltloam/ksVerticalExponentialDecayFactor': 0.002,
-               'soil/siltloam/soilColumnDepth': 3000,
-               'soil/siltyclayloam/setSoilLayerWeights': '0.19, 0.22, 0.26, 0.33',
-               'soil/siltyclayloam/surfaceKs': 3800,
-               'soil/siltyclayloam/ksLateralExponentialDecayFactor': 0.00135,
-               'soil/siltyclayloam/ksVerticalExponentialDecayFactor': 0.00175,
-               'soil/siltyclayloam/soilColumnDepth': 3000}
+# values_dict = {'calibration/VelmaCalibration.properties/be': 0.95,
+#                'soil/siltloam/setSoilLayerWeights': '0.19, 0.22, 0.26, 0.33',
+#                'soil/siltloam/surfaceKs': 4000,
+#                'soil/siltloam/ksLateralExponentialDecayFactor': 0.00135,
+#                'soil/siltloam/ksVerticalExponentialDecayFactor': 0.002,
+#                'soil/siltloam/soilColumnDepth': 3000,
+#                'soil/siltyclayloam/setSoilLayerWeights': '0.19, 0.22, 0.26, 0.33',
+#                'soil/siltyclayloam/surfaceKs': 3800,
+#                'soil/siltyclayloam/ksLateralExponentialDecayFactor': 0.00135,
+#                'soil/siltyclayloam/ksVerticalExponentialDecayFactor': 0.00175,
+#                'soil/siltyclayloam/soilColumnDepth': 3000}
+
+# values_dict = {'disturbance/restoration_pct/biomassAgStemNoffsiteFraction': 0,
+#                'disturbance/restoration_pct/biomassBgStemNoffsiteFraction': 0,
+#                'disturbance/restoration_pct/biomassLeafNoffsiteFraction': 0,
+#                'disturbance/restoration_pct/biomassRootNoffsiteFraction': 0,
+#                'disturbance/restoration_pct/ageThreshold': '15-15',
+#                'disturbance/restoration_thin1st/biomassAgStemNoffsiteFraction': 0.85,
+#                'disturbance/restoration_thin1st/biomassBgStemNoffsiteFraction': 0,
+#                'disturbance/restoration_thin1st/biomassLeafNoffsiteFraction': 0,
+#                'disturbance/restoration_thin1st/biomassRootNoffsiteFraction': 0,
+#                'disturbance/restoration_thin1st/ageThreshold': '40-40',
+#                'disturbance/restoration_thin2nd/biomassAgStemNoffsiteFraction': 0.85,
+#                'disturbance/restoration_thin2nd/biomassBgStemNoffsiteFraction': 0,
+#                'disturbance/restoration_thin2nd/biomassLeafNoffsiteFraction': 0,
+#                'disturbance/restoration_thin2nd/biomassRootNoffsiteFraction': 0,
+#                'disturbance/restoration_thin2nd/ageThreshold': '60-60',
+#                'disturbance/restoration_thin3rd/biomassAgStemNoffsiteFraction': 0.85,
+#                'disturbance/restoration_thin3rd/biomassBgStemNoffsiteFraction': 0,
+#                'disturbance/restoration_thin3rd/biomassLeafNoffsiteFraction': 0,
+#                'disturbance/restoration_thin3rd/biomassRootNoffsiteFraction': 0,
+#                'disturbance/restoration_thin3rd/ageThreshold': '80-80'}
+
+values_dict = {'calibration/VelmaInputs.properties/coverAgeMapFileName': 'landcover/historical_age_1984.asc'}
 
 params = values_dict.keys()
 values = values_dict.values()
