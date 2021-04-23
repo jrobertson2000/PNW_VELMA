@@ -7,11 +7,11 @@
 
 import config as config
 import numpy as np
-import pandas as pd
 import tempfile
 from scipy import ndimage
 from utils import flowlines
 from soil_merger import readHeader
+
 # ======================================================================================================================
 # Create temp directory for intermediary files
 tmp_dir = tempfile.mkdtemp()
@@ -21,6 +21,7 @@ try:
     filter_dir.mkdir(parents=True)
 except FileExistsError:
     pass
+
 # =======================================================================
 # WA requires a 10 meter no-management buffer around all streams, so will add those in with ID=0
 
@@ -29,70 +30,56 @@ flow = flowlines(config.flowlines)
 flow.get_flowlines_ascii(tmp_dir)
 no_mgmt_buffer = ndimage.binary_dilation(flow.raster, iterations=1)
 
-# Overlay buffer on cover ID map and export
-stand_id_prebuff_path = str(config.stand_id)
-stand_id_prebuff = np.loadtxt(stand_id_prebuff_path, skiprows=6)  # Each stand has a different number
-stand_id_prebuff[no_mgmt_buffer] = 0
-
-try:
-    filter_dir.mkdir(parents=True)
-except WindowsError:
-    pass
-header = readHeader(str(config.dem_velma))
-f = open(config.stand_id_velma, "w")
-f.write(header)
-np.savetxt(f, stand_id_prebuff, fmt="%i")
-f.close()
-
-
-# cover_id is a map of cover_id created in cover_rasterize_stands.py corresponding to stands, no management buffer (0),
-# and water/area outside of watershed (1)
-
+# Overlay buffer on stand ID map
 stand_id_path = str(config.stand_id_velma)
-stand_id = np.loadtxt(stand_id_path, skiprows=6)
-# These are the VELMA_IDs of the Ellsworth Experimental Basins
-basin_id = pd.read_csv(str(config.stand_id_velma.parents[0] / 'experimental_basin_velma_id.csv'))
+stand_id = np.loadtxt(stand_id_path, skiprows=6)  # Each stand has a different number
+stand_id[stand_id == -9999] = np.nan
+stand_id[no_mgmt_buffer] = 0
 
+# Import map of the Ellsworth Experimental Basins. Passive=0, Control=1, Active=2
+exp_basins = np.loadtxt(config.exp_basins_velma, skiprows=6)
+exp_basins[exp_basins == -9999] = np.nan
 
+# Marbled murrelet habitat is a protected area that can't be harvested
+murrelet = np.loadtxt(config.data_path / 'landcover' / 'murrelet_no_harvest.asc', skiprows=6)
+murrelet[murrelet == -9999] = np.nan
 
 # =======================================================================
-# Disturbances
-
-# Convert filter_map to list, then loop through and convert pixels to 1 if in stands_include, 0 if excluded
-stand_id_list = stand_id.flatten().tolist()
-stands = [int(x) for x in np.unique(stand_id)]
-header = readHeader(stand_id_path)
-
-
-def create_filter_map(disturbance_name, include):
-    filter_map_list = [1 if x in include else 0 for x in stand_id_list]
-    filter_map = np.array(filter_map_list).reshape(stand_id.shape)
-    outfile = filter_dir / '{}.asc'.format(disturbance_name)
-    f = open(outfile, 'w')
-    f.write(header)
-    # np.savetxt(f, filter_map, fmt='%i')
-    f.close()
-    return filter_map
+# Create (binary) disturbance filter maps for each forest management scenario
 
 # ===================================
 disturbance = 'industrial_clearcut'
-# All stands can be cut
-stands_exclude = [0, 1]  # Exclude no mgmt buffer (0) and water/area outside watershed (1)
-stands_include = [x for x in stands if x not in stands_exclude]
-map1 = create_filter_map(disturbance, stands_include)
+# All stands can be cut except protected areas
+filter_map = ((stand_id == 0) + (murrelet == 1))  # The excluded cells here are TRUE
+filter_map = np.invert(filter_map) * 1  # TRUE cells are inverted to false, and then binarized
+outfile = filter_dir / '{}.asc'.format(disturbance)
+f = open(outfile, 'w')
+header = readHeader(stand_id_path)
+f.write(header)
+np.savetxt(f, filter_map, fmt='%i')
+f.close()
 
 # ===================================
 disturbance = 'active_all'
-# All stands can be cut
-stands_exclude = [0, 1]  # Exclude no mgmt buffer and water/area outside watershed
-stands_include = [x for x in stands if x not in stands_exclude]
-map2 = create_filter_map(disturbance, stands_include)
+# All stands can be cut except protected areas
+filter_map = ((stand_id == 0) + (murrelet == 1))
+filter_map = np.invert(filter_map) * 1
+outfile = filter_dir / '{}.asc'.format(disturbance)
+f = open(outfile, 'w')
+header = readHeader(stand_id_path)
+f.write(header)
+np.savetxt(f, filter_map, fmt='%i')
+f.close()
 
 # ===================================
-disturbance = 'current'
-# All non-basin stands + only active stands in experimental basins can be cut
-stands_exclude = basin_id.loc[(basin_id['mgmt'] == 'passive') | (basin_id['mgmt'] == 'control')]['VELMA_ID'].tolist()
-stands_exclude.append(0)
-stands_exclude.append(1)
-stands_include = [x for x in stands if x not in stands_exclude]
-map3 = create_filter_map(disturbance, stands_include)
+disturbance = 'baseline'
+# Active experimental basins and all stands outside of basins can be cut, except protected areas
+filter_map = ((stand_id == 0) + (murrelet == 1) + (exp_basins == 1) + (exp_basins == 2))
+filter_map = np.invert(filter_map) * 1
+outfile = filter_dir / '{}.asc'.format(disturbance)
+f = open(outfile, 'w')
+header = readHeader(stand_id_path)
+f.write(header)
+np.savetxt(f, filter_map, fmt='%i')
+f.close()
+
