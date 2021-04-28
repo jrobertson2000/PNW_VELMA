@@ -4,7 +4,7 @@ Requires only the EPA's VELMA program (Java executable). Some data downloaded us
 (and ArcGIS license). ArcGIS is only used for resampling and reprojecting rasters, so this can be done in another GIS
 and the Python 3.x files used afterwards for further processing.
 
-<center><img src="https://github.com/ianpdavies/PNW_VELMA/blob/master/ellsworth_area.PNG" width="40%" height="40%"></center>
+<center><img src="https://github.com/ianpdavies/PNW_VELMA/blob/36340bc58f56e13ffa9912839b313fb39d2d47a9/ellsworth_area.PNG" width="35%" height="35%"></center>
 
 Background:
 ------------
