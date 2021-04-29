@@ -4,7 +4,7 @@ Requires only the EPA's VELMA program (Java executable). Some data downloaded us
 (and ArcGIS license). ArcGIS is only used for resampling and reprojecting rasters, so this can be done in another GIS
 and the Python 3.x files used afterwards for further processing.
 
-<center><img src="https://github.com/ianpdavies/PNW_VELMA/blob/master/ellsworth_area.PNG" width="40%" height="40%"></center>
+<center><img src="https://github.com/ianpdavies/PNW_VELMA/blob/36340bc58f56e13ffa9912839b313fb39d2d47a9/ellsworth_area.PNG" width="35%" height="35%"></center>
 
 Background:
 ------------
@@ -15,8 +15,8 @@ This repository includes the processing and analysis scripts used for this proje
 Set up notes
 ------------
  - Download the [VELMA .jar executable](https://www.epa.gov/water-research/visualizing-ecosystem-land-management-assessments-velma-model-20). Check in with the software authors (Bob McKane et al.) to ensure that you have the latest .jar file, and to ask for any supplementary tutorials and files.
- - The Python scripts require a specific directory system for input and output files. Individual files are accessed
-  via the paths in the `config.py` file, so ensure those are correct for your system before running any scripts.
+ - The Python scripts use relative file paths to read and write data. These are based on the paths to specific files stored in the `config.py` file, so ensure those are correct for your system before running any scripts.
+    - An example `config.py` file can be found in this repository. And below is an example directory structure that I used on my system.
 
 ```bash
 tnc_velma
@@ -31,16 +31,17 @@ tnc_velma
 │   └── vector
 ├── models
 ├── notebooks
-│   ├── archived
 ├── results
 ├── scripts
-│   ├── analysis
-│   ├── archived
-│   └── javascript
-├── tnc_velma
-└── velma
-    └── xml
+└── xml
 ```
+- `xml` contains the .xml configuration files with the parameters used for a VELMA simulation
+- `data` contains all of the data used for the project, including raw files before pre-processing. In VELMA, it will be the `initializeDataLocationRootName` directory.
+    - `ellsworth_velma` contains all of the fully-processed data that VELMA will use directly. In VELMA, it will be the `inputDataLocationDirName` directory.
+- `results` contains all of the output from a simulation. In VELMA, it will be the `initializeOutputDataLocationRoot`.
+- `models` will contain the trained regression model used for stream temperature seasonal bias correction
+- `notebooks` contains all Jupyter notebooks
+
 
 Data:
 ------------

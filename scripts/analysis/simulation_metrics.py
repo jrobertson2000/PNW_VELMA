@@ -12,8 +12,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 import xml.etree.ElementTree as ET
 # =======================================================================
 # Config
-results_dir = config.velma_data.parents[1] / 'results' / 'calibration' / 'subzero_water_balance'
-xml_dir = config.velma_data.parents[1] / 'velma' / 'xml' / 'calibration' / 'subzero_water_balance'
+results_dir = config.velma_data.parents[1] / 'results' / 'calibration' / 'corrected_harvest'
+xml_dir = config.velma_data.parents[1] / 'xml' / 'calibration' / 'corrected_harvest'
 
 sims = natsorted(next(os.walk(results_dir))[1])
 # removed = ['ellsworth_baseline_03_07', 'ellsworth_baseline_03_07_2']
