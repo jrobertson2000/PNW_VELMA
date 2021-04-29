@@ -6,7 +6,6 @@ and the Python 3.x files used afterwards for further processing.
 
 <center><img src="https://github.com/ianpdavies/PNW_VELMA/blob/36340bc58f56e13ffa9912839b313fb39d2d47a9/ellsworth_area.PNG" width="35%" height="35%"></center>
 
-Background:
 ------------
 This study examined the ecological effects of different forest management scenarios in the Ellsworth Preserve maintained by The Nature Conservancy in southwestern Washington. We used the VELMA model developed by the EPA to simulate soil, water, and land cover changes in the watershed from 1984-2100. 
 
@@ -15,6 +14,7 @@ This repository includes the processing and analysis scripts used for this proje
 Set up notes
 ------------
  - Download the [VELMA .jar executable](https://www.epa.gov/water-research/visualizing-ecosystem-land-management-assessments-velma-model-20). Check in with the software authors (Bob McKane et al.) to ensure that you have the latest .jar file, and to ask for any supplementary tutorials and files.
+ - All required Python 3.x packages are in `requirements.txt`
  - The Python scripts use relative file paths to read and write data. These are based on the paths to specific files stored in the `config.py` file, so ensure those are correct for your system before running any scripts.
     - An example config file can be found in this repository as `sample_config.py`. After cloning, change the name to `config.py` edit file paths accordingly. Below is an example directory structure that I used on my system.
 
