@@ -9,8 +9,8 @@ import mpld3
 import numpy as np
 # =======================================================================
 # Config
-start = pd.to_datetime('01-01-2003')
-end = pd.to_datetime('12-31-2019')
+start = pd.to_datetime('01-01-1984')
+end = pd.to_datetime('12-31-2020')
 
 # Average PRISM and Naselle gauge precipitation
 gauge = pd.read_csv(config.daily_ppt.parents[0] / 'GHCND_USC00455774_1929_2020.csv', parse_dates=True, index_col=5)
@@ -19,7 +19,7 @@ gauge['SNOW_SWE'] = gauge['SNOW'] / 13
 gauge['PRCP_TOT'] = gauge['PRCP'] + gauge['SNOW_SWE']
 gauge_precip = gauge[['PRCP_TOT']]
 
-prism_precip = pd.read_csv(str(config.daily_ppt.parents[0] / 'prism_ppt_1981_2020_daily.csv'), parse_dates=True, index_col=0)
+prism_precip = pd.read_csv(config.daily_ppt, parse_dates=True, index_col=0)
 
 # Expand precip record to full date range in case some days are missing
 rng = pd.date_range(start, end)
@@ -32,18 +32,18 @@ prism_precip_mean['avg_precip'] = prism_precip_mean.mean(axis=1)
 obs_p = prism_precip_mean.loc[:, ['avg_precip']]
 
 # Air temperature
-temp_path = config.daily_temp_mean.parents[0] / 'prism_temp_1981_2020_daily.csv'
+temp_path = config.daily_temp_mean
 temp = pd.read_csv(temp_path, parse_dates=True, index_col=0)
 obs_t = temp[(temp.index >= start) & (temp.index <= end)]
 
 # Export gauge and PRISM averaged precip
-outfile_p = str(config.velma_data / 'precip' / 'PRISM_gauge_avg_ppt_{}_{}.csv'.format(start.year, end.year))
+outfile_p = str(config.velma_data / 'precip' / 'PRISM_{}_{}_gauge_avg_ppt.csv'.format(start.year % 100, end.year % 100))
 if len(pd.date_range(start, end)) != len(obs_p):
     print('STOP: Duplicates/missing values exist in output file: ', outfile_p)
 obs_p.to_csv(outfile_p, header=False, index=False)
 
 # Export PRISM temp
-outfile_t = str(config.velma_data / 'temp' / 'PRISM_temp_{}_{}.csv'.format(start.year, end.year))
+outfile_t = str(config.velma_data / 'temp' / 'PRISM_{}_{}_temp.csv'.format(start.year % 100, end.year % 100))
 if len(pd.date_range(start, end)) != len(obs_t):
     print('STOP: Duplicates/missing values exist in output file: ', outfile_t)
 obs_t.to_csv(outfile_t, header=False, index=False)
