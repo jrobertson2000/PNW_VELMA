@@ -16,7 +16,7 @@ Set up notes
 ------------
  - Download the [VELMA .jar executable](https://www.epa.gov/water-research/visualizing-ecosystem-land-management-assessments-velma-model-20). Check in with the software authors (Bob McKane et al.) to ensure that you have the latest .jar file, and to ask for any supplementary tutorials and files.
  - The Python scripts use relative file paths to read and write data. These are based on the paths to specific files stored in the `config.py` file, so ensure those are correct for your system before running any scripts.
-    - An example `config.py` file can be found in this repository. And below is an example directory structure that I used on my system.
+    - An example config file can be found in this repository as `sample_config.py`. After cloning, change the name to `config.py` edit file paths accordingly. Below is an example directory structure that I used on my system.
 
 ```bash
 tnc_velma
