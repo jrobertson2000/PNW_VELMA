@@ -1,0 +1,13 @@
+seaborn==0.11.0
+statsmodels==0.12.2
+ConfigArgParse==1.2.3
+natsort==7.1.0
+scipy==1.6.0
+rasterio==1.1.5
+pandas==1.2.3
+mpld3==0.5.2
+numpy==1.20.1
+matplotlib==3.3.3
+geopandas==0.8.0
+ipython==7.22.0
+scikit_learn==0.24.2
