@@ -158,9 +158,9 @@ fig, axes = plt.subplots(ncols=2, nrows=3, figsize=(7, 6))
 cmap = sns.color_palette('colorblind', len(gcms))
 lim_factor = 0.5  # Padding value for min and max ylimits
 
-leftcols = ['Yearly total precipitation', '5-year total precipitation', 'Yearly max 7-day sum']
+leftcols = ['Yearly total precipitation', '5-year average total precipitation', 'Yearly max 7-day sum']
 rightcols = ['{}, GCM mean'.format(x) for x in leftcols]
-ylabs = np.repeat(['Degrees (C)' for x in leftcols], 2)
+ylabs = np.repeat(['Precipitation (mm)' for x in leftcols], 2)
 
 for i, scenario in enumerate(scenarios):
     z = [x.groupby(pd.Grouper(freq='Y')).mean() for x in precip_files]
