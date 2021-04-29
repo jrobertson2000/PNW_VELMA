@@ -8,10 +8,10 @@ import xml.etree.ElementTree as ET
 
 # =======================================================================
 
-xml_root = config.data_path.parents[0] / 'velma' / 'xml'
+xml_root = config.data_path.parents[0] / 'xml'
 
-# scenarios = ['baseline', 'historical', 'active_all', 'ind_clearcut']
-scenarios = ['historical']
+scenarios = ['baseline', 'historical', 'active_all', 'ind_clearcut']
+# scenarios = ['historical']
 
 # values_dict = {'calibration/VelmaCalibration.properties/be': 0.95,
 #                'soil/siltloam/setSoilLayerWeights': '0.19, 0.22, 0.26, 0.33',
@@ -46,7 +46,14 @@ scenarios = ['historical']
 #                'disturbance/restoration_thin3rd/biomassRootNoffsiteFraction': 0,
 #                'disturbance/restoration_thin3rd/ageThreshold': '80-80'}
 
-values_dict = {'calibration/VelmaInputs.properties/coverAgeMapFileName': 'landcover/historical_age_1984.asc'}
+values_dict = {'spatialDataWriter/co2_sum/initializeActiveYears': 9999,
+               'spatialDataWriter/biomass_ag_stem/initializeActiveYears': 9999,
+               'spatialDataWriter/biomass_delta_ag_stem/initializeActiveYears': 9999,
+               'spatialDataWriter/biomass_offsite/initializeActiveYears': 9999,
+               'spatialDataWriter/biomass_c/initializeActiveYears': 9999,
+               'spatialDataWriter/total_detritus_nitrogen/initializeActiveYears': 9999,
+               'spatialDataWriter/total_detritus_carbon/initializeActiveYears': 9999,
+               'spatialDataWriter/water_stored/initializeActiveYears': 9999}
 
 params = values_dict.keys()
 values = values_dict.values()
