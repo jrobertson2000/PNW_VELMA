@@ -436,3 +436,4 @@ for legobj in leg.legendHandles:
 
 fig.savefig(out_dir / 'stream_chemistry.png', bbox_inches='tight', dpi=export_dpi)
 
+plt.close('all')

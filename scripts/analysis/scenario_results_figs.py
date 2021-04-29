@@ -523,3 +523,4 @@ for legobj in leg.legendHandles:
 
 fig.savefig(out_dir / 'biomass_carbon.png', bbox_inches='tight', dpi=export_dpi)
 
+plt.close('all')
