@@ -1,0 +1,1165 @@
+<?xml version="1.0" encoding="UTF-8"?><velmaConfiguration>
+  <calibration>
+    <VelmaInputs.properties>
+      <input_at>temp/ellsworth_temp_2003_2019.csv</input_at>
+      <f_ksl>0</f_ksl>
+      <coverAgeMapFileName>landcover/historical_age_2004.asc</coverAgeMapFileName>
+      <numberOfLoops>1</numberOfLoops>
+      <forcing_end>2019</forcing_end>
+      <globalStateLogFileName>GlobalStateLog.txt</globalStateLogFileName>
+      <cellOffsetY>0</cellOffsetY>
+      <cellOffsetX>0</cellOffsetX>
+      <ncol>402</ncol>
+      <eyear>2007</eyear>
+      <nrow>767</nrow>
+      <initializeSoilDepth>0.25, 0.25, 0.25, 0.25</initializeSoilDepth>
+      <soilParametersIndexMapFileName>soil/MapunitRaster_10m.asc</soilParametersIndexMapFileName>
+      <input_dem>topography/dem.asc</input_dem>
+      <cell>10</cell>
+      <input_stream_chem/>
+      <run_index>ellsworth_baseline_03_07_21_19</run_index>
+      <syear>2003</syear>
+      <stty>3</stty>
+      <csvTraceLogFileName>GlobalTraceLog.csv</csvTraceLogFileName>
+      <reportAllCoverResults>false</reportAllCoverResults>
+      <coverSpeciesIndexMapFileName>landcover/conifer.asc</coverSpeciesIndexMapFileName>
+      <input_soil_depth/>
+      <input_rain/>
+      <reportAllSoilResults>false</reportAllSoilResults>
+      <delineationManfestLocationName/>
+      <forcing_start>2003</forcing_start>
+      <input_runoff>runoff/ellsworth_Q_2003_2007_dummy.csv</input_runoff>
+      <input_soil_txt>soil/MapunitRaster_10m.asc</input_soil_txt>
+      <enableReachMapping>SOLO_MODE</enableReachMapping>
+      <initialReachOutlets/>
+      <flowDirectionFileName/>
+      <ks>600</ks>
+      <outy>236</outy>
+      <outx>284</outx>
+      <sdmm>0</sdmm>
+      <f_ksv>0</f_ksv>
+      <initializeOutputDataLocationRoot>E:/Users/ian.davies/tnc_velma/results</initializeOutputDataLocationRoot>
+      <flowAccumulationFileName/>
+    </VelmaInputs.properties>
+    <VelmaCalibration.properties>
+      <useExperimentalNin>true</useExperimentalNin>
+      <qf_NO3>0</qf_NO3>
+      <srth>0.12</srth>
+      <ninMaxLossFromNinBankPerDay>0.1</ninMaxLossFromNinBankPerDay>
+      <setChannelThreshold>2.5</setChannelThreshold>
+      <initialUniformSoilMoisture>-1</initialUniformSoilMoisture>
+      <nashSutcliffeEndYearForRunoffStats>2007</nashSutcliffeEndYearForRunoffStats>
+      <disablePsmWaterStressor>false</disablePsmWaterStressor>
+      <denitDiffusivity>9.5</denitDiffusivity>
+      <co2RespirationFraction>0.99</co2RespirationFraction>
+      <donSolubilityCoefficient>0.0</donSolubilityCoefficient>
+      <permeabilityFractionsFileName>landcover/permeability.asc</permeabilityFractionsFileName>
+      <ninBankInitialSpinUpValue>0.0</ninBankInitialSpinUpValue>
+      <isc>1367.0</isc>
+      <setGroundwaterStorageFraction/>
+      <deg_lon>-123.888197</deg_lon>
+      <initial_don>1.5</initial_don>
+      <useEtUptake>false</useEtUptake>
+      <setWaterBalanceExtremaFixup>false</setWaterBalanceExtremaFixup>
+      <initialNo3>0.1</initialNo3>
+      <ros>0.5</ros>
+      <performDenitrificationAfterWaterTransport>false</performDenitrificationAfterWaterTransport>
+      <qf_din>0</qf_din>
+      <Tmlt>2.0</Tmlt>
+      <warmestMaxAverageMonthlyTemperature>25</warmestMaxAverageMonthlyTemperature>
+      <setNitrificationFunctionSelection>DEL_GROSSO_XLS_2013</setNitrificationFunctionSelection>
+      <initial_doc>30.0</initial_doc>
+      <qf_don>0</qf_don>
+      <iteration>100</iteration>
+      <setPermeabilityFraction/>
+      <wet_nin>0.1</wet_nin>
+      <docSolubilityCoefficient>0.0</docSolubilityCoefficient>
+      <qf_doc>0</qf_doc>
+      <moistureUptakeK>0</moistureUptakeK>
+      <setInflowCapacityLimiterMode>ALL_LAYERS</setInflowCapacityLimiterMode>
+      <Tsn>-1.0</Tsn>
+      <trimTopographyOutputToWatershedBoundary>false</trimTopographyOutputToWatershedBoundary>
+      <useNitrification>true</useNitrification>
+      <enableTransportBalanceCheck>true</enableTransportBalanceCheck>
+      <ninSolubilityCoefficient>0.05</ninSolubilityCoefficient>
+      <initialNh4>0.1</initialNh4>
+      <roair>1300.0</roair>
+      <useSoilTemperature>false</useSoilTemperature>
+      <DDs>5.0</DDs>
+      <psm_q>0.015</psm_q>
+      <enableWaterBalanceReport>false</enableWaterBalanceReport>
+      <parallelEdgeRecursionDepth>3</parallelEdgeRecursionDepth>
+      <deg_lat>46.409810</deg_lat>
+      <dry_nin>0.1</dry_nin>
+      <nashSutcliffeStartYearForRunoffStats>2004</nashSutcliffeStartYearForRunoffStats>
+      <useDenitrification>true</useDenitrification>
+      <microbeCefficiency>0</microbeCefficiency>
+      <no3SolubilityCoefficient>0.0</no3SolubilityCoefficient>
+      <avgGST>0</avgGST>
+      <nh4SolubilityCoefficient>0.0</nh4SolubilityCoefficient>
+      <avgAT>9.81</avgAT>
+      <errthreshold>0.010</errthreshold>
+      <be>0.95</be>
+      <sr2>1.0</sr2>
+      <enableHaltOnTransportBalanceCheckFail>true</enableHaltOnTransportBalanceCheckFail>
+      <ninHalfSaturationKnForLossFromNinBank>40.0</ninHalfSaturationKnForLossFromNinBank>
+      <sr1>2.5</sr1>
+      <enableTopographySpatialDataOutput>false</enableTopographySpatialDataOutput>
+    </VelmaCalibration.properties>
+  </calibration>
+  <cellDataWriter>
+    <node_15>
+      <cellY>582</cellY>
+      <cellX>125</cellX>
+    </node_15>
+    <node_2>
+      <cellY>360</cellY>
+      <cellX>280</cellX>
+    </node_2>
+    <node_3>
+      <cellY>350</cellY>
+      <cellX>243</cellX>
+    </node_3>
+    <node_1>
+      <cellY>236</cellY>
+      <cellX>284</cellX>
+    </node_1>
+    <node_11>
+      <cellY>597</cellY>
+      <cellX>278</cellX>
+    </node_11>
+    <node_12>
+      <cellY>585</cellY>
+      <cellX>212</cellX>
+    </node_12>
+    <node_8>
+      <cellY>425</cellY>
+      <cellX>318</cellX>
+    </node_8>
+    <node_13>
+      <cellY>567</cellY>
+      <cellX>158</cellX>
+    </node_13>
+    <node_9>
+      <cellY>473</cellY>
+      <cellX>265</cellX>
+    </node_9>
+    <node_14>
+      <cellY>541</cellY>
+      <cellX>112</cellX>
+    </node_14>
+    <node_6>
+      <cellY>386</cellY>
+      <cellX>129</cellX>
+    </node_6>
+    <node_7>
+      <cellY>417</cellY>
+      <cellX>83</cellX>
+    </node_7>
+    <node_4>
+      <cellY>369</cellY>
+      <cellX>209</cellX>
+    </node_4>
+    <node_5>
+      <cellY>379</cellY>
+      <cellX>160</cellX>
+    </node_5>
+    <node_10>
+      <cellY>549</cellY>
+      <cellX>343</cellX>
+    </node_10>
+  </cellDataWriter>
+  <cover>
+    <conifer>
+      <mortalityLeafAnnualFraction>1.0</mortalityLeafAnnualFraction>
+      <useLinearMortalityBgStem>false</useLinearMortalityBgStem>
+      <mortalityRootNumeratorCoefficient>1.0</mortalityRootNumeratorCoefficient>
+      <mortalityRootDenominatorCoefficient>0.5</mortalityRootDenominatorCoefficient>
+      <noTranspirationPetFraction>1.0</noTranspirationPetFraction>
+      <humusCtoN/>
+      <transpirationLimiterJdayOff>257</transpirationLimiterJdayOff>
+      <biomassRootCtoN>77</biomassRootCtoN>
+      <useLinearMortalityLeaf>false</useLinearMortalityLeaf>
+      <nitrogenFixationMoistureScalarLambda>0.77</nitrogenFixationMoistureScalarLambda>
+      <mortalityAgStemDenominatorCoefficient>15.0</mortalityAgStemDenominatorCoefficient>
+      <initialDetritusAgStemCarbon>11933</initialDetritusAgStemCarbon>
+      <nitrogenFixationAsymbioticMaximum>0.0</nitrogenFixationAsymbioticMaximum>
+      <petParam2>0.622</petParam2>
+      <uptakeMaximumT>50.0</uptakeMaximumT>
+      <petParam1>0.549744875</petParam1>
+      <nppToBiomassRootNfraction>0.35</nppToBiomassRootNfraction>
+      <humusNmaxDecay/>
+      <useEtRecoveryFraction>true</useEtRecoveryFraction>
+      <jDaySenescenceOff>366</jDaySenescenceOff>
+      <mortalityRootAnnualFraction>1.0</mortalityRootAnnualFraction>
+      <uniqueName>conifer</uniqueName>
+      <biomassAgStemCtoN>857</biomassAgStemCtoN>
+      <jDaySenescenceOn>350</jDaySenescenceOn>
+      <nitrogenFixationTemperatureScalarOptimumT>25.0</nitrogenFixationTemperatureScalarOptimumT>
+      <useTranspirationLimiter>true</useTranspirationLimiter>
+      <mortalityLeafExponentialCoefficient>0.8</mortalityLeafExponentialCoefficient>
+      <nitrogenFixationTemperatureScalarCurvature>0.40</nitrogenFixationTemperatureScalarCurvature>
+      <detritusLeafCtoN>46</detritusLeafCtoN>
+      <mortalityBgStemDenominatorCoefficient>5.0</mortalityBgStemDenominatorCoefficient>
+      <initialBiomassAgStemCarbon>33816</initialBiomassAgStemCarbon>
+      <nh4MaximumUptakeRate>0.100</nh4MaximumUptakeRate>
+      <no3MaximumUptakeRate>0.066</no3MaximumUptakeRate>
+      <mortalityBgStemNumeratorCoefficient>1.0</mortalityBgStemNumeratorCoefficient>
+      <initialBiomassRootCarbon>542</initialBiomassRootCarbon>
+      <detritusBgStemCtoN>533</detritusBgStemCtoN>
+      <initialDetritusBgStemCarbon>2580</initialDetritusBgStemCarbon>
+      <nppToBiomassLeafNfraction>0.55</nppToBiomassLeafNfraction>
+      <etRecoveryFractionSlope>0.0016</etRecoveryFractionSlope>
+      <initialBiomassLeafCarbon>667</initialBiomassLeafCarbon>
+      <GaleGrigalBetaParam>0.976</GaleGrigalBetaParam>
+      <useNitrogenFixation>false</useNitrogenFixation>
+      <mortalityBgStemAnnualFraction>1.0</mortalityBgStemAnnualFraction>
+      <etRecoveryFractionMinimumLeafBiomassC>287</etRecoveryFractionMinimumLeafBiomassC>
+      <etRecoveryFractionMinimumValue>0.30</etRecoveryFractionMinimumValue>
+      <nitrogenFixationSymbioticMaximum>0.0</nitrogenFixationSymbioticMaximum>
+      <initialDetritusRootCarbon>552</initialDetritusRootCarbon>
+      <temperaturePetOff>-3</temperaturePetOff>
+      <mortalityAgStemAnnualFraction>1.0</mortalityAgStemAnnualFraction>
+      <biomassLeafCtoN>46</biomassLeafCtoN>
+      <etRecoveryFractionIntercept>-0.16</etRecoveryFractionIntercept>
+      <detritusBgStemNmaxDecay>0.00112</detritusBgStemNmaxDecay>
+      <nitrogenFixationMoistureScalarK>1.6</nitrogenFixationMoistureScalarK>
+      <mortalityLeafNumeratorCoefficient>1.0</mortalityLeafNumeratorCoefficient>
+      <detritusRootNmaxDecay>0.008</detritusRootNmaxDecay>
+      <mortalityRootExponentialCoefficient>0.2</mortalityRootExponentialCoefficient>
+      <initialBiomassBgStemCarbon>6782</initialBiomassBgStemCarbon>
+      <initialDetritusLeafCarbon>854</initialDetritusLeafCarbon>
+      <degreeDayBase>2.0</degreeDayBase>
+      <nh4Kn>0.5</nh4Kn>
+      <useLinearMortalityRoot>false</useLinearMortalityRoot>
+      <uniqueId>1</uniqueId>
+      <mortalityAgStemExponentialCoefficient>0.11</mortalityAgStemExponentialCoefficient>
+      <nitrogenFixationTemperatureScalarMaximumT>48.0</nitrogenFixationTemperatureScalarMaximumT>
+      <seedlingValueAgStemCarbon>0.0</seedlingValueAgStemCarbon>
+      <insulationCarbonUpperBound>700.0</insulationCarbonUpperBound>
+      <insulationEfficiency>0.5</insulationEfficiency>
+      <mortalityAgStemNumeratorCoefficient>1.0</mortalityAgStemNumeratorCoefficient>
+      <nppToBiomassAgStemNfraction>0.8</nppToBiomassAgStemNfraction>
+      <biomassBgStemCtoN>533</biomassBgStemCtoN>
+      <jDayUptakeFirstAllowed>1</jDayUptakeFirstAllowed>
+      <uptakeOptimumT>25.0</uptakeOptimumT>
+      <mortalityLeafDenominatorCoefficient>10.0</mortalityLeafDenominatorCoefficient>
+      <detritusLeafNmaxDecay>0.0033</detritusLeafNmaxDecay>
+      <mortalityBgStemExponentialCoefficient>0.07</mortalityBgStemExponentialCoefficient>
+      <no3Kn>0.5</no3Kn>
+      <degreeDayThreshold>2.0</degreeDayThreshold>
+      <detritusAgStemCtoN>857</detritusAgStemCtoN>
+      <uptakeCurvature>0.5</uptakeCurvature>
+      <allowUptakeAfterSenescence>true</allowUptakeAfterSenescence>
+      <seedlingValueRootCarbon>0.0</seedlingValueRootCarbon>
+      <nitrogenFixationUptakeFraction>0.5</nitrogenFixationUptakeFraction>
+      <detritusRootCtoN>77</detritusRootCtoN>
+      <seedlingValueBgStemCarbon>0.0</seedlingValueBgStemCarbon>
+      <useLinearMortalityAgStem>false</useLinearMortalityAgStem>
+      <transpirationLimiterJdayOn>149</transpirationLimiterJdayOn>
+      <transpirationLimiterCoeffD>0.48</transpirationLimiterCoeffD>
+      <nitrogenFixerFraction>0.0</nitrogenFixerFraction>
+      <transpirationLimiterCoeffC>0.0006</transpirationLimiterCoeffC>
+      <transpirationLimiterCoeffB>0.000001</transpirationLimiterCoeffB>
+      <transpirationLimiterCoeffA>0.52</transpirationLimiterCoeffA>
+      <initialHumusCarbon/>
+      <detritusAgStemNmaxDecay>0.00112</detritusAgStemNmaxDecay>
+      <seedlingValueLeafCarbon>0.0</seedlingValueLeafCarbon>
+      <transpirationLimiterMaxTotalBiomassC>47000</transpirationLimiterMaxTotalBiomassC>
+    </conifer>
+  </cover>
+  <contaminant/>
+  <display>
+    <DisplayRange>
+      <maxBiomassRootLayersDayDisplay>250.0</maxBiomassRootLayersDayDisplay>
+      <minBiomassRootDayDisplay>0.0</minBiomassRootDayDisplay>
+      <minBiomassLeafDayDisplay>0.0</minBiomassLeafDayDisplay>
+      <maxNppDayDisplay>20.0</maxNppDayDisplay>
+      <maxVsaValueSpatialDisplay>50.0</maxVsaValueSpatialDisplay>
+      <maxEtDayDisplay>10.0</maxEtDayDisplay>
+      <maxNh4SpatialDisplay>1.0</maxNh4SpatialDisplay>
+      <minWaterLayerTDayDisplay>0.0</minWaterLayerTDayDisplay>
+      <maxBiomassBgStemDayDisplay>10000.0</maxBiomassBgStemDayDisplay>
+      <maxSurfaceDocSpatialDisplay>100.0</maxSurfaceDocSpatialDisplay>
+      <maxTotalNLossDayDisplay>0.005</maxTotalNLossDayDisplay>
+      <maxNepYearSumDisplay>3000.0</maxNepYearSumDisplay>
+      <minHydroYearSumDisplay>0.0</minHydroYearSumDisplay>
+      <maxBiomassYearFinalDisplay>50000.0</maxBiomassYearFinalDisplay>
+      <minHumusDayDisplay>0.0</minHumusDayDisplay>
+      <minBiomassRootLayersDayDisplay>0.0</minBiomassRootLayersDayDisplay>
+      <maxDonLossYearFinalDisplay>2.0</maxDonLossYearFinalDisplay>
+      <minDetritusRootDayDisplay>0.0</minDetritusRootDayDisplay>
+      <minDetritusLeafDayDisplay>0.0</minDetritusLeafDayDisplay>
+      <maxAirTDayDisplay>45</maxAirTDayDisplay>
+      <max_psm_don>0</max_psm_don>
+      <maxHumusLayersDayDisplay>1500.0</maxHumusLayersDayDisplay>
+      <maxDonLossYearSumDisplay>0.4</maxDonLossYearSumDisplay>
+      <maxDonSpatialDisplay>5.0</maxDonSpatialDisplay>
+      <minBiomassYearSumDisplay>0.0</minBiomassYearSumDisplay>
+      <maxNppYearSumDisplay>1200.0</maxNppYearSumDisplay>
+      <maxNh4LossYearSumDisplay>0.025</maxNh4LossYearSumDisplay>
+      <maxLitterDayDisplay>55000.0</maxLitterDayDisplay>
+      <maxStandingWaterSpatialDisplay>5.0</maxStandingWaterSpatialDisplay>
+      <min_ndetritus>6000.0</min_ndetritus>
+      <maxContaminantDaySpatialDisplay>1.0</maxContaminantDaySpatialDisplay>
+      <maxHydroYearSumDisplay>3000.0</maxHydroYearSumDisplay>
+      <maxBiomassAgStemDayDisplay>1000.0</maxBiomassAgStemDayDisplay>
+      <max_ndetritus>0</max_ndetritus>
+      <maxDetritusRootLayersDayDisplay>720.0</maxDetritusRootLayersDayDisplay>
+      <maxAirTSpatialDisplay>45</maxAirTSpatialDisplay>
+      <minNepDayDisplay>-1400.0</minNepDayDisplay>
+      <maxAirTYearDisplay>45</maxAirTYearDisplay>
+      <maxCo2DaySpatialDisplay>2.0</maxCo2DaySpatialDisplay>
+      <minDetritusBgStemLayersDayDisplay>0</minDetritusBgStemLayersDayDisplay>
+      <maxDonLossDayDisplay>0.002</maxDonLossDayDisplay>
+      <vplot_d>0</vplot_d>
+      <max_psm_c>0</max_psm_c>
+      <maxAgTotalBurnedCarbonDaySpatialDisplay>750.0</maxAgTotalBurnedCarbonDaySpatialDisplay>
+      <maxNh4LossDayDisplay>0.0008</maxNh4LossDayDisplay>
+      <maxNo3LossYearSumDisplay>0.004</maxNo3LossYearSumDisplay>
+      <minDocLossYearSumDisplay>0.0</minDocLossYearSumDisplay>
+      <maxDetritusBgStemLayersDayDisplay>1800.0</maxDetritusBgStemLayersDayDisplay>
+      <minHgDaySpatialDisplay>0.0</minHgDaySpatialDisplay>
+      <minNepYearSumDisplay>-3000.0</minNepYearSumDisplay>
+      <maxContaminantDayDisplay>1.0</maxContaminantDayDisplay>
+      <maxSnowMeltSpatialDisplay>60.0</maxSnowMeltSpatialDisplay>
+      <maxNepDayDisplay>1000.0</maxNepDayDisplay>
+      <maxDocLossYearFinalDisplay>200.0</maxDocLossYearFinalDisplay>
+      <max_np>0</max_np>
+      <maxGroundTDayDisplay>40.0</maxGroundTDayDisplay>
+      <maxNo3SpatialDisplay>1.0</maxNo3SpatialDisplay>
+      <maxPlantUptakeSpatialDisplay>0.5</maxPlantUptakeSpatialDisplay>
+      <maxDocSpatialDisplay>600.0</maxDocSpatialDisplay>
+      <maxStandingWaterDayDisplay>250.0</maxStandingWaterDayDisplay>
+      <max_aet>0</max_aet>
+      <maxMeHgDaySpatialDisplay>1.0</maxMeHgDaySpatialDisplay>
+      <minVsaValueSpatialDisplay>0.0</minVsaValueSpatialDisplay>
+      <maxIrradianceSpatialDisplay>500.0</maxIrradianceSpatialDisplay>
+      <maxBiomassDayDisplay>75000.0</maxBiomassDayDisplay>
+      <maxAgTotalCarbonDaySpatialDisplay>1000.0</maxAgTotalCarbonDaySpatialDisplay>
+      <maxBiomassRootDayDisplay>1600.0</maxBiomassRootDayDisplay>
+      <maxNinSpatialDisplay>1.0</maxNinSpatialDisplay>
+      <maxBiomassLeafDayDisplay>1600.0</maxBiomassLeafDayDisplay>
+      <maxCo2DenitDaySpatialDisplay>2.0</maxCo2DenitDaySpatialDisplay>
+      <minAgTotalBurnedCarbonDaySpatialDisplay>0.0</minAgTotalBurnedCarbonDaySpatialDisplay>
+      <minHumusLayersDayDisplay>0.0</minHumusLayersDayDisplay>
+      <minIrradianceSpatialDisplay>0.0</minIrradianceSpatialDisplay>
+      <minAgTotalCarbonDaySpatialDisplay>0.0</minAgTotalCarbonDaySpatialDisplay>
+      <minBiomassBgStemDayDisplay>0.0</minBiomassBgStemDayDisplay>
+      <vplot_doc>0</vplot_doc>
+      <maxNinDayDisplay>0.02</maxNinDayDisplay>
+      <maxDetritusRootDayDisplay>1200.0</maxDetritusRootDayDisplay>
+      <maxAsymbioticNfixedDayDisplay>0.1</maxAsymbioticNfixedDayDisplay>
+      <maxWaterLayerTDayDisplay>40.0</maxWaterLayerTDayDisplay>
+      <maxDetritusLeafDayDisplay>2000.0</maxDetritusLeafDayDisplay>
+      <maxTidewaterSpatialDisplay>3.0</maxTidewaterSpatialDisplay>
+      <minBiomassYearFinalDisplay>0.0</minBiomassYearFinalDisplay>
+      <maxAgTotalGrazedCarbonDaySpatialDisplay>750.0</maxAgTotalGrazedCarbonDaySpatialDisplay>
+      <max_psm_npp>0</max_psm_npp>
+      <minContaminantDaySpatialDisplay>0.0</minContaminantDaySpatialDisplay>
+      <min_aet>100.0</min_aet>
+      <maxSnowSpatialDisplay>50.0</maxSnowSpatialDisplay>
+      <maxNo3LossDayDisplay>0.0002</maxNo3LossDayDisplay>
+      <maxNo3DenitDaySpatialDisplay>2.0</maxNo3DenitDaySpatialDisplay>
+      <maxSurfaceDonSpatialDisplay>1.0</maxSurfaceDonSpatialDisplay>
+      <maxSurfaceNh4SpatialDisplay>1.0</maxSurfaceNh4SpatialDisplay>
+      <maxSubRunoffDayDisplay>0</maxSubRunoffDayDisplay>
+      <minAirTDayDisplay>-10.0</minAirTDayDisplay>
+      <maxHgDaySpatialDisplay>1.0</maxHgDaySpatialDisplay>
+      <minDetritusRootLayersDayDisplay>0.0</minDetritusRootLayersDayDisplay>
+      <maxDetritusBgStemDayDisplay>7000.0</maxDetritusBgStemDayDisplay>
+      <maxNitrificationDaySpatialDisplay>0.002</maxNitrificationDaySpatialDisplay>
+      <maxBiomassYearSumDisplay>50000.0</maxBiomassYearSumDisplay>
+      <minAirTSpatialDisplay>-10.0</minAirTSpatialDisplay>
+      <maxHumusDayDisplay>20000.0</maxHumusDayDisplay>
+      <minDetritusBgStemDayDisplay>0.0</minDetritusBgStemDayDisplay>
+      <maxDocLossDayDisplay>0.04</maxDocLossDayDisplay>
+      <minAirTYearDisplay>0.0</minAirTYearDisplay>
+      <minBiomassAgStemDayDisplay>0.0</minBiomassAgStemDayDisplay>
+      <minGroundTDayDisplay>-20.0</minGroundTDayDisplay>
+      <max_qtdin>0</max_qtdin>
+      <maxIrradianceDayDisplay>500.0</maxIrradianceDayDisplay>
+      <maxRunoffDayDisplay>100</maxRunoffDayDisplay>
+      <maxRainSpatialDisplay>120</maxRainSpatialDisplay>
+      <minContaminantDayDisplay>0.0</minContaminantDayDisplay>
+      <maxSymbioticNfixedDayDisplay>1.0</maxSymbioticNfixedDayDisplay>
+      <minPlantUptakeSpatialDisplay>0.0</minPlantUptakeSpatialDisplay>
+      <minBiomassDayDisplay>0.0</minBiomassDayDisplay>
+      <maxRainDayDisplay>120</maxRainDayDisplay>
+      <maxDetritusAgStemDayDisplay>30000.0</maxDetritusAgStemDayDisplay>
+      <maxDenitrificationDaySpatialDisplay>0.002</maxDenitrificationDaySpatialDisplay>
+      <maxDocLossYearSumDisplay>10.0</maxDocLossYearSumDisplay>
+      <maxNinfiltrationSpatialDisplay>1.0</maxNinfiltrationSpatialDisplay>
+      <minDetritusAgStemDayDisplay>0.0</minDetritusAgStemDayDisplay>
+      <maxSurfaceNo3SpatialDisplay>1.0</maxSurfaceNo3SpatialDisplay>
+      <minLitterDayDisplay>0.0</minLitterDayDisplay>
+      <minMeHgDaySpatialDisplay>0.0</minMeHgDaySpatialDisplay>
+      <minAgTotalGrazedCarbonDaySpatialDisplay>0.0</minAgTotalGrazedCarbonDaySpatialDisplay>
+      <maxSnowDepthSpatialDisplay>30.0</maxSnowDepthSpatialDisplay>
+    </DisplayRange>
+  </display>
+  <disturbance>
+    <restoration_3rd>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>80</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>+0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.33</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.33</biomassBgStemNharvestFraction>
+      <initializeFilterIds>3, 4, 7, 8, 9, 10, 11, 14, 16, 17, 18, 19, 20, 21, 25, 28, 29, 30, 36, 37, 38, 39, 40, 42, 43, 44, 46, 48, 49, 50, 51, 52, 53, 54, 55, 57, 58, 60, 61, 62, 63, 64, 65, 66, 68, 71, 72, 75, 76, 78, 82, 83, 84, 86, 87, 89, 90, 94, 98, 100, 101, 102, 111, 112, 113, 114, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 134, 136, 140, 141, 142, 146, 149, 150, 151, 152, 153, 155, 159, 160, 161, 162, 163, 164, 165, 171, 174, 180, 181, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 194, 195, 196, 197, 198, 199, 200, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 217</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/current.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.33</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2000-2019</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.33</biomassAgStemNharvestFraction>
+    </restoration_3rd>
+    <historical_cut_04>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2004.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2004</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_04>
+    <historical_cut_08>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2008.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2008</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_08>
+    <historical_cut_09>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2009.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2009</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_09>
+    <historical_cut_10>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2010.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2010</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_10>
+    <historical_cut_11>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2011.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2011</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_11>
+    <historical_cut_12>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2010.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2012</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_12>
+    <historical_cut_13>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2013.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2013</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_13>
+    <historical_cut_14>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2014.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2014</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_14>
+    <historical_cut_15>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2015.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2015</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_15>
+    <historical_cut_16>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2016.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2016</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_16>
+    <historical_cut_17>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2017.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2017</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_17>
+    <historical_cut_18>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2018.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2018</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_18>
+    <historical_cut_19>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>0</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.98</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.98</biomassBgStemNharvestFraction>
+      <initializeFilterIds>1</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/historical_clearcut_2019.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.98</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2019</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.98</biomassAgStemNharvestFraction>
+    </historical_cut_19>
+    <restoration_thin1st>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>40</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>+0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.36</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.36</biomassBgStemNharvestFraction>
+      <initializeFilterIds>3, 4, 7, 8, 9, 10, 11, 14, 16, 17, 18, 19, 20, 21, 25, 28, 29, 30, 36, 37, 38, 39, 40, 42, 43, 44, 46, 48, 49, 50, 51, 52, 53, 54, 55, 57, 58, 60, 61, 62, 63, 64, 65, 66, 68, 71, 72, 75, 76, 78, 82, 83, 84, 86, 87, 89, 90, 94, 98, 100, 101, 102, 111, 112, 113, 114, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 134, 136, 140, 141, 142, 146, 149, 150, 151, 152, 153, 155, 159, 160, 161, 162, 163, 164, 165, 171, 174, 180, 181, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 194, 195, 196, 197, 198, 199, 200, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 217</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/current.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.36</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2000-2019</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.36</biomassAgStemNharvestFraction>
+    </restoration_thin1st>
+    <restoration_pct>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>15</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>+0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.13</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.13</biomassBgStemNharvestFraction>
+      <initializeFilterIds>3, 4, 7, 8, 9, 10, 11, 14, 16, 17, 18, 19, 20, 21, 25, 28, 29, 30, 36, 37, 38, 39, 40, 42, 43, 44, 46, 48, 49, 50, 51, 52, 53, 54, 55, 57, 58, 60, 61, 62, 63, 64, 65, 66, 68, 71, 72, 75, 76, 78, 82, 83, 84, 86, 87, 89, 90, 94, 98, 100, 101, 102, 111, 112, 113, 114, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 134, 136, 140, 141, 142, 146, 149, 150, 151, 152, 153, 155, 159, 160, 161, 162, 163, 164, 165, 171, 174, 180, 181, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 194, 195, 196, 197, 198, 199, 200, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 217</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/current.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.13</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2000-2019</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.13</biomassAgStemNharvestFraction>
+    </restoration_pct>
+    <restoration_2nd>
+      <enableAutomaticSpatialReporting>false</enableAutomaticSpatialReporting>
+      <ageThreshold>60</ageThreshold>
+      <biomassAgStemNoffsiteFraction>0.85</biomassAgStemNoffsiteFraction>
+      <initializeAgeModification>+0</initializeAgeModification>
+      <initializeCoverIds>1</initializeCoverIds>
+      <biomassLeafNharvestFraction>0.33</biomassLeafNharvestFraction>
+      <biomassBgStemNharvestFraction>0.33</biomassBgStemNharvestFraction>
+      <initializeFilterIds>3, 4, 7, 8, 9, 10, 11, 14, 16, 17, 18, 19, 20, 21, 25, 28, 29, 30, 36, 37, 38, 39, 40, 42, 43, 44, 46, 48, 49, 50, 51, 52, 53, 54, 55, 57, 58, 60, 61, 62, 63, 64, 65, 66, 68, 71, 72, 75, 76, 78, 82, 83, 84, 86, 87, 89, 90, 94, 98, 100, 101, 102, 111, 112, 113, 114, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 134, 136, 140, 141, 142, 146, 149, 150, 151, 152, 153, 155, 159, 160, 161, 162, 163, 164, 165, 171, 174, 180, 181, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 194, 195, 196, 197, 198, 199, 200, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 217</initializeFilterIds>
+      <modelClass>HarvestLsrDisturbanceModel</modelClass>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <biomassBgStemNoffsiteFraction>0</biomassBgStemNoffsiteFraction>
+      <filterMapFullName>landcover/filter_maps/current.asc</filterMapFullName>
+      <biomassRootNharvestFraction>0.33</biomassRootNharvestFraction>
+      <initializeActiveJdays>183</initializeActiveJdays>
+      <biomassLeafNoffsiteFraction>0</biomassLeafNoffsiteFraction>
+      <initializeActiveYears>2000-2019</initializeActiveYears>
+      <biomassRootNoffsiteFraction>0</biomassRootNoffsiteFraction>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <biomassAgStemNharvestFraction>0.33</biomassAgStemNharvestFraction>
+    </restoration_2nd>
+  </disturbance>
+  <mercury/>
+  <penumbra>
+    <PenumbraModelProxy>
+      <outputs_ASCIIs>false</outputs_ASCIIs>
+      <transmittanceShift>1.0</transmittanceShift>
+      <landscapeCoverageFile>landcover/conifer.asc</landscapeCoverageFile>
+      <outputs_PNGs>false</outputs_PNGs>
+      <dailyGrain>60</dailyGrain>
+      <makeOutputPNGs>false</makeOutputPNGs>
+      <useGpu>false</useGpu>
+      <cloudIrradianceEffectCalibration>1.0</cloudIrradianceEffectCalibration>
+      <skyDailyCoverageFile/>
+      <modelClass>penumbra.PenumbraEngine_v3</modelClass>
+      <uniqueId>1</uniqueId>
+      <outputs_Transmittance>false</outputs_Transmittance>
+      <calibrationGroundEffect>0.5</calibrationGroundEffect>
+      <totalIrradiancePercentShift>1.0</totalIrradiancePercentShift>
+      <zDimRep>DEFAULT</zDimRep>
+      <makeOutputASCIIs>false</makeOutputASCIIs>
+      <outputs_Height>false</outputs_Height>
+      <uniqueName>PenumbraModelProxy</uniqueName>
+    </PenumbraModelProxy>
+  </penumbra>
+  <soil>
+    <siltloam>
+      <nitrificationKmax>0.1</nitrificationKmax>
+      <porosityFraction>0.501</porosityFraction>
+      <nitrificationWfpsCoeff3>4.5</nitrificationWfpsCoeff3>
+      <nitrificationWfpsCoeff2>1.5</nitrificationWfpsCoeff2>
+      <nitrificationWfpsCoeff1>0.0</nitrificationWfpsCoeff1>
+      <nitrificationWfpsCoeff0>0.5</nitrificationWfpsCoeff0>
+      <bulkDensity>1.42</bulkDensity>
+      <setSoilLayerWeights>0.19, 0.22, 0.26, 0.33</setSoilLayerWeights>
+      <donLossFraction>0.07</donLossFraction>
+      <docLossFraction>0.05</docLossFraction>
+      <soilColumnDepth>3000</soilColumnDepth>
+      <setDenitrificationSoilCondition>INTACT</setDenitrificationSoilCondition>
+      <setSoilLayerKsLateralValues/>
+      <uniqueId>4</uniqueId>
+      <initialHumusCarbon>15000.0</initialHumusCarbon>
+      <setAllowExtremaAtLayer/>
+      <nh4LossFraction>0.02</nh4LossFraction>
+      <pH>4.5</pH>
+      <nitrificationToN2o>0.02</nitrificationToN2o>
+      <ksVerticalExponentialDecayFactor>0.002</ksVerticalExponentialDecayFactor>
+      <humusNmaxDecay>0.00028</humusNmaxDecay>
+      <nitrificationK1>0.2</nitrificationK1>
+      <uniqueName>siltloam</uniqueName>
+      <no3LossFraction>0.04</no3LossFraction>
+      <setSoilLayerThicknesses/>
+      <wiltPoint>0.133</wiltPoint>
+      <surfaceKs>4000</surfaceKs>
+      <ksLateralExponentialDecayFactor>0.00135</ksLateralExponentialDecayFactor>
+      <setSoilLayerKsVerticalValues/>
+      <fieldCapacity>0.33</fieldCapacity>
+      <humusCtoN>35.7</humusCtoN>
+    </siltloam>
+    <siltyclayloam>
+      <nitrificationKmax>0.1</nitrificationKmax>
+      <porosityFraction>0.471</porosityFraction>
+      <nitrificationWfpsCoeff3>4.5</nitrificationWfpsCoeff3>
+      <nitrificationWfpsCoeff2>1.5</nitrificationWfpsCoeff2>
+      <nitrificationWfpsCoeff1>0.0</nitrificationWfpsCoeff1>
+      <nitrificationWfpsCoeff0>0.5</nitrificationWfpsCoeff0>
+      <bulkDensity>1.27</bulkDensity>
+      <setSoilLayerWeights>0.19, 0.22, 0.26, 0.33</setSoilLayerWeights>
+      <donLossFraction>0.07</donLossFraction>
+      <docLossFraction>0.05</docLossFraction>
+      <soilColumnDepth>3000</soilColumnDepth>
+      <setDenitrificationSoilCondition>INTACT</setDenitrificationSoilCondition>
+      <setSoilLayerKsLateralValues/>
+      <uniqueId>10</uniqueId>
+      <initialHumusCarbon>15000.0</initialHumusCarbon>
+      <setAllowExtremaAtLayer/>
+      <nh4LossFraction>0.02</nh4LossFraction>
+      <pH>4.5</pH>
+      <nitrificationToN2o>0.02</nitrificationToN2o>
+      <ksVerticalExponentialDecayFactor>0.00175</ksVerticalExponentialDecayFactor>
+      <humusNmaxDecay>0.00028</humusNmaxDecay>
+      <nitrificationK1>0.2</nitrificationK1>
+      <uniqueName>siltyclayloam</uniqueName>
+      <no3LossFraction>0.04</no3LossFraction>
+      <setSoilLayerThicknesses/>
+      <wiltPoint>0.208</wiltPoint>
+      <surfaceKs>3800</surfaceKs>
+      <ksLateralExponentialDecayFactor>0.00135</ksLateralExponentialDecayFactor>
+      <setSoilLayerKsVerticalValues/>
+      <fieldCapacity>0.366</fieldCapacity>
+      <humusCtoN>35.7</humusCtoN>
+    </siltyclayloam>
+  </soil>
+  <spatialDataWriter>
+    <co2_sum>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>C02</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/co2_sum</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </co2_sum>
+    <total_biomass_nitrogen>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>TotalBiomassNitrogen</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/total_biomass_nitrogen</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </total_biomass_nitrogen>
+    <total_detritus_carbon>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>TotalDetritusCarbon</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/total_detritus_carbon</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </total_detritus_carbon>
+    <biomass_delta_ag_stem>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>BIOMASS_DELTA_AG_STEM</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/biomass_delta_ag_stem</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </biomass_delta_ag_stem>
+    <total_biomass_carbon>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>TotalBiomassCarbon</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/total_biomass_carbon</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </total_biomass_carbon>
+    <biomass_offsite>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>BIOMASS_HARVESTED_TO_OFFSITE_C</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/biomass_offsite</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </biomass_offsite>
+    <total_detritus_nitrogen>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>TotalDetritusNitrogen</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/total_detritus_nitrogen</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </total_detritus_nitrogen>
+    <uptake_nitrogen>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>UPTAKE_N</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/uptake_nitrogen</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </uptake_nitrogen>
+    <biomass_ag_stem>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>BIOMASS_AG_STEM_N</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/biomass_ag_stem</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </biomass_ag_stem>
+    <water_stored>
+      <initializeActiveJdays>1, 32, 63, 94, 125, 156, 187, 218, 249, 280, 311, 342</initializeActiveJdays>
+      <initializeSpatialDataSources>WATER_STORED</initializeSpatialDataSources>
+      <trimOutputToWatershedBoundary>false</trimOutputToWatershedBoundary>
+      <modelClass>SpatialDataWriter</modelClass>
+      <allowNonWatershedCellValues>true</allowNonWatershedCellValues>
+      <initializeResultsLocation>spatial_writer/water_stored</initializeResultsLocation>
+      <initializeActiveLoops>1</initializeActiveLoops>
+      <initializeActiveYears>2003-2007</initializeActiveYears>
+    </water_stored>
+  </spatialDataWriter>
+  <startups>
+    <VelmaStartups.properties>
+      <setSoilTemperatureModel>SWAT_DERIVED</setSoilTemperatureModel>
+      <useExperimentalPsmCode>false</useExperimentalPsmCode>
+      <spatialFileWritersDirName/>
+      <setEndStateSpatialDataLocationName/>
+      <inputDataLocationDirName>ellsworth_velma</inputDataLocationDirName>
+      <cellFileWritersDirName/>
+      <useIsotopeCode>false</useIsotopeCode>
+      <disturbanceModelsDirName/>
+      <suppressAllOutputFiles>false</suppressAllOutputFiles>
+      <useExperimentalHydrologyCode>false</useExperimentalHydrologyCode>
+      <inputDataLocationRootName>E:/Users/ian.davies/tnc_velma/data</inputDataLocationRootName>
+      <setStartStateSpatialDataLocationName/>
+      <useExperimentalWaterTemperatureCode>false</useExperimentalWaterTemperatureCode>
+      <notesText># =================================================
+NOTE:
+Streamflow gauge was placed at x=284, y=236. Can use x=106, y=406 for testing as it is a much smaller upstream area.
+
+# =================================================
+04/15/2021
+- Setting be=1.5 -&gt; 0.95
+soilColumnDepth=2500 -&gt; 3000
+
+# =================================================
+04/14/2021
+- soilColumnDepth=1900 -&gt; 2500 (siltloam)
+- Setting be=2.8 -&gt; 1.5
+- Setting ksv=0.001 -&gt; 0.002 (siltloam), -&gt; 0.00175 (siltyclayloam)
+- Setting ksl=0.004 -&gt; 0.00135
+
+# =================================================
+04/13/2021
+- Setting setSoilLayerWeights=0.1, 0.2, 0.3, 0.4 -&gt; 0.18, 0.24, 0.285, 0.3
+- Setting ksv=0.0007 -&gt; 0.001
+- Setting surfaceKs=3800 -&gt; 4000 (siltloam), 3600 -&gt; 3800 (siltyclayloam)
+
+
+# =================================================
+02/10/2021
+- Turning on penumbra stream temp modeling 
+- Setting setStreamTemperatureModel=BASELINE_LINEAR -&gt; USFS_DERIVED
+- Added 15 cell data writers at streamflow gauge and upstream
+(ellsworth_baseline_03_07_21)
+
+
+
+# =================================================
+01/28/2021
+- Setting ksv=0.001 -&gt; 0.0007, ksl=0.001 -&gt; 0.004
+(ellsworth_baseline_03_07_12)
+
+# =================================================
+01/27/2021
+
+- Setting soil layer thicknesses to  0.1, 0.2, 0.3, 0.4
+(ellsworth_baseline_03_07_11)
+
+# =================================================
+01/26/2021
+
+- Setting soil layer thicknesses to  0.15, 0.2, 0.3, 0.35
+- Setting ks decay factors to 0.000 decimal places.
+(ellsworth_baseline_03_07_8)
+
+- Using 2003-2007 runoff
+(ellsworth_baseline_03_07_3)
+# =================================================
+01/22/2021
+
+- Setting be=1.3 -&gt; 2.8
+- Setting surfaceKs=3000 -&gt;3800 (siltloam), =2800 -&gt; 3600 (siltyclayloam)
+(ellsworth_baseline_04_07_45)
+
+# =================================================
+01/21/2021
+
+- Setting be=0.9 -&gt; 1.3
+(ellsworth_baseline_04_07_40)
+
+# =================================================
+01/20/2021
+
+- Setting ksLateralExponentialDecayFactor=0.002 -&gt; 0.00002 (siltloam), =0.00175 -&gt; 0.0000175 (siltyclayloam)
+(ellsworth_baseline_04_07_34)
+
+
+# =================================================
+01/19/2021
+
+- Setting ksVerticalExponentialDecayFactor=0.00135 -&gt; 0.0000135
+(ellsworth_baseline_04_07_32)
+
+
+- Setting soilColumnDepth=1500 -&gt; 2500 (siltloam); =1500-&gt;2500 (siltyclayloam)
+- Setting surfaceKs=1500 -&gt;2500 (siltloam), =1250 -&gt; 2000 (siltyclayloam)
+(ellsworth_baseline_04_07_29)
+
+
+# =================================================
+01/12/2021
+
+- Using the average of PRISM and GHCND gauge precipitation measurements
+(ellsworth_baseline_04_07_13_avg)
+
+# =================================================
+01/05/2021
+
+- Setting surfaceKs=1250 -&gt; 1500 (siltloam),  1000 -&gt; 1250 (siltclayloam)
+
+(ellsworth_baseline_04_07_13)
+
+
+# =================================================
+01/05/2021
+
+- Setting surfaceKs=1050 -&gt; 1250 (siltloam),  750 -&gt; 900 (siltclayloam)
+- Setting be=0.75 -&gt; 0.9 to increase AET/PET ratio
+
+(ellsworth_baseline_04_07_10)
+
+# =================================================
+01/04/2021
+
+- Setting surfaceKs=700 -&gt; 1050 (siltloam), 320 -&gt; 750 (siltclayloam)
+
+(ellsworth_baseline_04_07_9)
+
+- Used gauge data from Naselle River (USC00455774) instead of PRISM
+
+(ellsworth_baseline_04_07_6)
+
+- Setting setInflowCapacityLimiterMode=TOP_LAYER -&gt; ALL_LAYERS (to recover NSE loss moving from VELMA 2.0 to 2.1, see Bob's 12/23/2020 email)
+- Set all conifer parameters to Gray's XML to avoid PET=0.
+- humusCtoN, humusNmaxDecay, initialHumusCarbon, missing from Gray's, so keeping blank for now
+
+
+# =================================================
+12/22/2020
+- Lowering be to 0.118 based on Naselle River value here (https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fjawr.12010&amp;file=jawr12010_sm_TableS1.pdf)
+
+
+WAS USING VELMA 2.0 - NOW RUNNING IN VELMA 2.1
+
+# =================================================
+12/20/2020
+- Still getting water balance issues (not convering for 1 instance, and allwb=0.046067 outside acceptable range [-0.040000, 0.040000]
+
+# =================================================
+12/16/2020
+- Changed display max settings to fit range of temp, precip, runoff values
+- Was accidentally using incomplete precip/temp data for temp/rainDriverDataFileName
+
+# =================================================
+12/15/2020
+- Adding restoration thinning for all active basins and non-experimental stands
+- Added historical cuts using Hansen yearly forest loss as fitler maps (need to check with forestry team re: what harvest % these should be, look like 0.7 or so)
+- Using historical_age_2004.asc for cover age; assuming every pixel that is cut from 2004-2019 is 40yrs old.
+
+# =================================================
+12/11/2020
+- Adding permeability map (doens't seem to make much of a difference in NS)
+
+# =================================================
+12/10/2020
+- Was using incorrect precip/runoff/emp data - added in correct dates
+
+# =================================================
+12/09/2020
+- Runoff chart wasn't displaying, set min/max display values from Blue River XML
+
+# =================================================
+12/08/2020
+Fixed water balance not converging problem by:
+- Setting iteration=100
+- Setting errthreshold = 0.010
+- Setting setSoilTemperatureModel = SWAT_DERIVED (had to import from Gray's)
+- Adding runoff back
+- Not sure how to get chart display of runoff, Y values are all 0
+
+# =================================================
+12/07/2020
+- Iterations=100 for debugging
+- Using soil (silt loam/silty clay loam) and calibration parameters from Gray's XML
+- Running with and without runoff data both returns water balance error and shutdown.
+"Error in storage=1.4210854715202004E-14, ksv=327.57117,ksl=227.25673"
+
+
+# =================================================
+12/02/2020
+- Trying to identify source of water balance not converging
+- Removing disturbances
+- Removing runoff</notesText>
+      <collectCalibrationData>true</collectCalibrationData>
+      <setStreamTemperatureModel>USFS_DERIVED</setStreamTemperatureModel>
+      <useMercuryCode>false</useMercuryCode>
+    </VelmaStartups.properties>
+  </startups>
+  <tidewater/>
+  <weather>
+    <DefaultWeatherModel>
+      <snowMeltRate>5.0</snowMeltRate>
+      <rainOnSnowEffect>0.5</rainOnSnowEffect>
+      <rainDriverDataFileName>precip/PRISM_gauge_avg_ppt_2003_2019.csv</rainDriverDataFileName>
+      <uniqueId>1</uniqueId>
+      <modelClass>gov.epa.velmasimulator.DefaultWeatherModel</modelClass>
+      <uniqueName>DefaultWeatherModel</uniqueName>
+      <airTemperatureDriverDataFileName>temp/ellsworth_temp_2003_2019.csv</airTemperatureDriverDataFileName>
+      <snowMeltTemperature>2.0</snowMeltTemperature>
+      <snowFormationTemperature>-1.0</snowFormationTemperature>
+    </DefaultWeatherModel>
+  </weather>
+</velmaConfiguration>
