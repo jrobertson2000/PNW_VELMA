@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 xml_root = config.data_path.parents[0] / 'xml'
 
-scenarios = ['baseline', 'historical', 'active_all', 'ind_clearcut']
+scenarios = ['baseline', 'historical', 'active_all', 'ind35yr']
 # scenarios = ['historical']
 
 # values_dict = {'calibration/VelmaCalibration.properties/be': 0.95,
