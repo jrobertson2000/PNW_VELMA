@@ -13,6 +13,13 @@ from soil_merger import readHeader
 import rasterio
 from rasterio import features
 # ======================================================================================================================
+# Config
+start_date = 2020  # Simulation start date
+end_date = 2099  # Simulation end date
+yearly_cut = 0.1  # We want to clearcut 10% max of stands each year
+clearcut_age = 35  # Age at which stands get cut
+
+# =======================================================================
 # Import files to create protected areas
 
 # Create temp directory for intermediary files
@@ -43,10 +50,6 @@ murrelet[murrelet == -9999] = np.nan
 # Create (binary) disturbance filter maps for each forest management scenario
 
 # Don't want industrial clearcuts to all happen on the first harvest day, so will stagger them randomly
-start_date = 2020
-end_date = 2099
-yearly_cut = 0.1  # We want to clearcut 10% max of stands each year
-clearcut_age = 35
 
 # Import stand shapefile
 stand_shp = gpd.read_file(config.stand_shp.parents[0] / 'Ellsworth_Stands_updated.shp')
