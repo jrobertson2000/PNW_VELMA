@@ -113,11 +113,12 @@ for scenario in scenarios:
 # Plot temperature
 
 plt.close('all')
-fig, axes = plt.subplots(ncols=2, nrows=3, figsize=(7, 6))
-cmap = sns.color_palette('tab10', len(gcms))
+fig, axes = plt.subplots(ncols=2, nrows=5, figsize=(7, 8))
+cmap = sns.color_palette('colorblind', len(gcms))
 lim_factor = 0.5  # Padding value for min and max ylimits
 
-leftcols = ['Yearly average temperature', 'Yearly min 7-day average', 'Yearly max 7-day average']
+leftcols = ['Yearly average temperature', 'Yearly min 7-day average', 'Yearly max 7-day average',
+            'Summer average temperature', 'Winter average temperature']
 rightcols = ['{}, GCM mean'.format(x) for x in leftcols]
 ylabs = np.repeat(['Degrees (C)' for x in leftcols], 2)
 
@@ -130,8 +131,16 @@ for i, scenario in enumerate(scenarios):
 
     yearly_7day_max = pd.concat([x.groupby(pd.Grouper(freq='y')).max() for x in z], axis=1)
 
+    z = [x.groupby(pd.Grouper(freq='Q-NOV')).mean() for x in temp_files]
+    y = pd.concat([x for x in z], axis=1)
+    summer_avg = y.iloc[2:, :].iloc[::4, :]
+
+    z = [x.groupby(pd.Grouper(freq='Q-NOV')).mean() for x in temp_files]
+    y = pd.concat([x for x in z], axis=1)
+    winter_avg = y.iloc[4:, :].iloc[::4, :]
+
     dfs = []
-    for df in [temp_y_avg, yearly_7day_min, yearly_7day_max]:
+    for df in [temp_y_avg, yearly_7day_min, yearly_7day_max, summer_avg, winter_avg]:
         df.columns = gcms
         df = df[(df.index.year >= sim_start.year + 1)]
         dfs.append(df)
@@ -141,10 +150,6 @@ for i, scenario in enumerate(scenarios):
         axes[j, 0].title.set_text(leftcols[j])
         dfs[j].mean(axis=1).plot(ax=axes[j, 1], label=scenario, color='dimgray')
         axes[j, 1].title.set_text(rightcols[j])
-        ymin = np.floor(np.min(dfs[j].to_numpy()) - (np.std(dfs[j].to_numpy()) * lim_factor))
-        ymax = np.ceil(np.max(dfs[j].to_numpy()) + (np.std(dfs[j].to_numpy()) * lim_factor))
-        axes[j, 0].set_ylim([ymin, ymax])
-        axes[j, 1].set_ylim([ymin, ymax])
         axes[j, 0].get_legend().remove()
 
 for i, ax in enumerate(axes.flat):
@@ -152,8 +157,13 @@ for i, ax in enumerate(axes.flat):
     ax.xaxis.label.set_visible(False)
     ax.set_ylabel(ylabs[i])
 
-plt.tight_layout(rect=[0, 0, 1, 0.99], h_pad=0.01, w_pad=0.00)
-leg = axes[0, 0].legend(loc='upper left', bbox_to_anchor=(0, 1.3), fancybox=True, ncol=5, fontsize='small')
+plt.tight_layout(rect=[0, 0, 1, 0.99])
+
+# Prevent duplicate GCM labels (dict can only have unique keys)
+handles, labels = axes[0, 0].get_legend_handles_labels()
+by_label = dict(zip(labels, handles))
+leg = axes[0, 0].legend(by_label.values(), by_label.keys(), loc='upper left',
+                        bbox_to_anchor=(0, 1.5), fancybox=True, ncol=5, fontsize='small')
 for legobj in leg.legendHandles:
     legobj.set_linewidth(2.0)
 
@@ -163,11 +173,12 @@ fig.savefig(out_dir / 'temperature.png', bbox_inches='tight', dpi=export_dpi)
 # Plot precipitation
 
 plt.close('all')
-fig, axes = plt.subplots(ncols=2, nrows=3, figsize=(7, 6))
-cmap = sns.color_palette('tab10', len(gcms))
+fig, axes = plt.subplots(ncols=2, nrows=4, figsize=(7, 7))
+cmap = sns.color_palette('colorblind', len(gcms))
 lim_factor = 0.5  # Padding value for min and max ylimits
 
-leftcols = ['Yearly total precipitation', '5-year average total precipitation', 'Yearly max 7-day sum']
+leftcols = ['Yearly total precipitation', 'Yearly max 7-day total precipitation', 'Yearly total summer precipitation',
+            'Yearly total winter precipitation']
 rightcols = ['{}, GCM mean'.format(x) for x in leftcols]
 ylabs = np.repeat(['Precipitation (mm)' for x in leftcols], 2)
 
@@ -175,14 +186,19 @@ for i, scenario in enumerate(scenarios):
     z = [x.groupby(pd.Grouper(freq='Y')).sum() for x in precip_files]
     ppt_y_sum = pd.concat([x for x in z], axis=1)
 
-    z = [x.groupby(pd.Grouper(freq='5Y')).mean() for x in precip_files]
-    ppt_5y_sum = pd.concat([x for x in z], axis=1)
-
-    z = [x.groupby(pd.Grouper(freq='7d')).sum() for x in temp_files]
+    z = [x.groupby(pd.Grouper(freq='7d')).sum() for x in precip_files]
     yearly_7day_max = pd.concat([x.groupby(pd.Grouper(freq='y')).max() for x in z], axis=1)
 
+    z = [x.groupby(pd.Grouper(freq='Q-NOV')).sum() for x in precip_files]
+    y = pd.concat([x for x in z], axis=1)
+    summer_sum = y.iloc[2:, :].iloc[::4, :]
+
+    z = [x.groupby(pd.Grouper(freq='Q-NOV')).sum() for x in precip_files]
+    y = pd.concat([x for x in z], axis=1)
+    winter_sum = y.iloc[4:, :].iloc[::4, :]
+
     dfs = []
-    for df in [ppt_y_sum, ppt_5y_sum, yearly_7day_max]:
+    for df in [ppt_y_sum, yearly_7day_max, summer_sum, winter_sum]:
         df.columns = gcms
         dfs.append(df)
 
@@ -191,10 +207,6 @@ for i, scenario in enumerate(scenarios):
         axes[j, 0].title.set_text(leftcols[j])
         dfs[j].mean(axis=1).plot(ax=axes[j, 1], label=scenario, color='dimgray')
         axes[j, 1].title.set_text(rightcols[j])
-        ymin = np.floor(np.min(dfs[j].to_numpy()) - (np.std(dfs[j].to_numpy()) * lim_factor))
-        ymax = np.ceil(np.max(dfs[j].to_numpy()) + (np.std(dfs[j].to_numpy()) * lim_factor))
-        axes[j, 0].set_ylim([ymin, ymax])
-        axes[j, 1].set_ylim([ymin, ymax])
         axes[j, 0].get_legend().remove()
 
 for i, ax in enumerate(axes.flat):
@@ -202,8 +214,13 @@ for i, ax in enumerate(axes.flat):
     ax.xaxis.label.set_visible(False)
     ax.set_ylabel(ylabs[i])
 
-plt.tight_layout(rect=[0, 0, 1, 0.99], h_pad=0.01, w_pad=0.00)
-leg = axes[0, 0].legend(loc='upper left', bbox_to_anchor=(0, 1.3), fancybox=True, ncol=5, fontsize='small')
+plt.tight_layout(rect=[0, 0, 1, 0.99])
+
+# Prevent duplicate GCM labels (dict can only have unique keys)
+handles, labels = axes[0, 0].get_legend_handles_labels()
+by_label = dict(zip(labels, handles))
+leg = axes[0, 0].legend(by_label.values(), by_label.keys(), loc='upper left',
+                        bbox_to_anchor=(0, 1.4), fancybox=True, ncol=5, fontsize='small')
 for legobj in leg.legendHandles:
     legobj.set_linewidth(2.0)
 
@@ -213,11 +230,13 @@ fig.savefig(out_dir / 'precipitation.png', bbox_inches='tight', dpi=export_dpi)
 # Plot runoff
 
 plt.close('all')
-fig, axes = plt.subplots(ncols=2, nrows=4, figsize=(7, 6))
-cmap = sns.color_palette('tab10', len(gcms))
+fig, axes = plt.subplots(ncols=2, nrows=5, figsize=(7, 8))
+cmap = sns.color_palette('colorblind', len(gcms))
+cmap_means = sns.color_palette('deep', len(scenarios))
 lim_factor = 0.5  # Padding value for min and max ylimits
 
-leftcols = ['Yearly min 7-day average', 'Yearly max 7-day average', 'Yearly sum flow', 'Yearly mean flow']
+leftcols = ['Yearly min 7-day average', 'Yearly max 7-day average', 'Yearly mean flow', 'Average summer flow',
+            'Average winter flow']
 rightcols = ['{}, GCM mean'.format(x) for x in leftcols]
 ylabs = np.repeat(['Runoff (mm)' for x in leftcols], 2)
 
@@ -227,36 +246,42 @@ for i, scenario in enumerate(scenarios):
 
     yearly_7day_max = pd.concat([x.groupby(pd.Grouper(freq='y')).max() for x in z], axis=1)
 
-    z = [x.groupby(pd.Grouper(freq='y')).sum()['Runoff_All(mm/day)_Delineated_Average'] for x in dailies[i]]
-    yearly_sum = pd.concat(z, axis=1)
-
     z = [x.groupby(pd.Grouper(freq='y')).mean()['Runoff_All(mm/day)_Delineated_Average'] for x in dailies[i]]
     yearly_mean = pd.concat(z, axis=1)
 
+    z = [x.groupby(pd.Grouper(freq='Q-NOV')).mean()['Runoff_All(mm/day)_Delineated_Average'] for x in dailies[i]]
+    y = pd.concat([x for x in z], axis=1)
+    summer_avg = y.iloc[2:, :].iloc[::4, :]
+
+    z = [x.groupby(pd.Grouper(freq='Q-NOV')).mean()['Runoff_All(mm/day)_Delineated_Average'] for x in dailies[i]]
+    y = pd.concat([x for x in z], axis=1)
+    winter_avg = y.iloc[4:, :].iloc[::4, :]
+
     dfs = []
-    for df in [yearly_7day_min, yearly_7day_max, yearly_sum, yearly_mean]:
+    for df in [yearly_7day_min, yearly_7day_max, yearly_mean, summer_avg, winter_avg]:
         df.columns = gcms
         df = df[(df.index.year >= sim_start.year + 1)]
         dfs.append(df)
 
     for j, ax in enumerate(axes):
-        dfs[j].plot(ax=axes[j, 0], linewidth=0.7, color=cmap)
+        dfs[j].plot(ax=axes[j, 0], linewidth=0.9, color=cmap)
         axes[j, 0].title.set_text(leftcols[j])
         dfs[j].mean(axis=1).plot(ax=axes[j, 1], label=scenario, color='dimgray')
         axes[j, 1].title.set_text(rightcols[j])
         axes[j, 0].get_legend().remove()
-        ymin = np.floor(np.min(dfs[j].to_numpy()) - (np.std(dfs[j].to_numpy()) * lim_factor))
-        ymax = np.ceil(np.max(dfs[j].to_numpy()) + (np.std(dfs[j].to_numpy()) * lim_factor))
-        axes[j, 0].set_ylim([ymin, ymax])
-        axes[j, 1].set_ylim([ymin, ymax])
 
 for i, ax in enumerate(axes.flat):
     ax.set_xlim([sim_start + pd.DateOffset(years=1), sim_end])
     ax.xaxis.label.set_visible(False)
     ax.set_ylabel(ylabs[i])
 
-plt.tight_layout(rect=[0, 0, 1, 0.99], h_pad=0.01, w_pad=0.00)
-leg = axes[0, 0].legend(loc='upper left', bbox_to_anchor=(0, 1.5), fancybox=True, ncol=5, fontsize='small')
+plt.tight_layout(rect=[0, 0, 1, 0.99])
+
+# Prevent duplicate GCM labels (dict can only have unique keys)
+handles, labels = axes[0, 0].get_legend_handles_labels()
+by_label = dict(zip(labels, handles))
+leg = axes[0, 0].legend(by_label.values(), by_label.keys(), loc='upper left',
+                        bbox_to_anchor=(0, 1.6), fancybox=True, ncol=5, fontsize='small')
 for legobj in leg.legendHandles:
     legobj.set_linewidth(2.0)
 
@@ -330,11 +355,13 @@ for i, scenario in enumerate(scenarios):
 # Plot stream temperature
 
 plt.close('all')
-fig, axes = plt.subplots(ncols=2, nrows=3, figsize=(7, 5))
-cmap = sns.color_palette('tab10', len(gcms))
+fig, axes = plt.subplots(ncols=2, nrows=5, figsize=(7, 8))
+cmap = sns.color_palette('colorblind', len(gcms))
+cmap_means = sns.color_palette('deep', len(scenarios))
 lim_factor = 0.5  # Padding value for min and max ylimits
 
-leftcols = ['Yearly mean', 'Yearly min 7-day average', 'Yearly max 7-day average']
+leftcols = ['Yearly mean', 'Yearly min 7-day average', 'Yearly max 7-day average',
+            'Summer average', 'Winter average']
 rightcols = ['{}, GCM mean'.format(x) for x in leftcols]
 ylabs = np.repeat(['Degrees (C)' for x in leftcols], 2)
 
@@ -348,21 +375,25 @@ for i, scenario in enumerate(scenarios):
     z = [x.groupby(pd.Grouper(freq='7d')).mean() for x in stream_temps_corrected[i]]
     yearly_7day_max = pd.concat([x.groupby(pd.Grouper(freq='y')).max() for x in z], axis=1)
 
+    z = [x.groupby(pd.Grouper(freq='Q-NOV')).mean() for x in stream_temps_corrected[i]]
+    y = pd.concat([x for x in z], axis=1)
+    summer_avg = y.iloc[2:, :].iloc[::4, :]
+
+    z = [x.groupby(pd.Grouper(freq='Q-NOV')).mean() for x in stream_temps_corrected[i]]
+    y = pd.concat([x for x in z], axis=1)
+    winter_avg = y.iloc[4:, :].iloc[::4, :]
+
     dfs = []
-    for df in [yearly_mean, yearly_7day_min, yearly_7day_max]:
+    for df in [yearly_mean, yearly_7day_min, yearly_7day_max, summer_avg, winter_avg]:
         df.columns = gcms
         df = df[(df.index.year >= sim_start.year + 1)]
         dfs.append(df)
 
     for j, ax in enumerate(axes):
-        dfs[j].plot(ax=axes[j, 0], linewidth=0.7, color=cmap)
+        dfs[j].plot(ax=axes[j, 0], linewidth=0.9, color=cmap)
         axes[j, 0].title.set_text(leftcols[j])
         dfs[j].mean(axis=1).plot(ax=axes[j, 1], label=scenario, color='dimgray')
         axes[j, 1].title.set_text(rightcols[j])
-        ymin = np.floor(np.min(dfs[j].to_numpy()) - (np.std(dfs[j].to_numpy()) * lim_factor))
-        ymax = np.ceil(np.max(dfs[j].to_numpy()) + (np.std(dfs[j].to_numpy()) * lim_factor))
-        axes[j, 0].set_ylim([ymin, ymax])
-        axes[j, 1].set_ylim([ymin, ymax])
         axes[j, 0].get_legend().remove()
 
 for i, ax in enumerate(axes.flat):
@@ -371,7 +402,7 @@ for i, ax in enumerate(axes.flat):
     ax.set_ylabel(ylabs[i])
 
 plt.tight_layout(rect=[0, 0, 1, 0.99], h_pad=0.01, w_pad=0.00)
-leg = axes[0, 0].legend(loc='upper left', bbox_to_anchor=(0, 1.7), fancybox=True, ncol=5, fontsize='small')
+leg = axes[0, 0].legend(loc='upper left', bbox_to_anchor=(0, 1.4), fancybox=True, ncol=5, fontsize='small')
 for legobj in leg.legendHandles:
     legobj.set_linewidth(2.0)
 
@@ -381,8 +412,8 @@ fig.savefig(out_dir / 'stream_temperature.png', bbox_inches='tight', dpi=export_
 # Plot stream chemistry
 
 plt.close('all')
-fig, axes = plt.subplots(ncols=2, nrows=4, figsize=(6.5, 5.5))
-cmap = sns.color_palette('tab10', len(gcms))
+fig, axes = plt.subplots(ncols=2, nrows=4, figsize=(7, 6))
+cmap = sns.color_palette('colorblind', len(gcms))
 lim_factor = 0.5  # Padding value for min and max ylimits
 
 leftcols = ['NH4', 'N03', 'DON', 'DOC']
@@ -414,14 +445,10 @@ for i, scenario in enumerate(scenarios):
         dfs.append(df)
 
     for j, ax in enumerate(axes):
-        dfs[j].plot(ax=axes[j, 0], linewidth=0.7, color=cmap)
+        dfs[j].plot(ax=axes[j, 0], linewidth=0.9, color=cmap)
         axes[j, 0].title.set_text(leftcols[j])
         dfs[j].mean(axis=1).plot(ax=axes[j, 1], label=scenario, color='dimgray')
         axes[j, 1].title.set_text(rightcols[j])
-        ymin = np.min(dfs[j].to_numpy()) - (np.std(dfs[j].to_numpy()) * lim_factor)
-        ymax = np.max(dfs[j].to_numpy()) + (np.std(dfs[j].to_numpy()) * lim_factor)
-        axes[j, 0].set_ylim([ymin, ymax])
-        axes[j, 1].set_ylim([ymin, ymax])
         axes[j, 0].get_legend().remove()
 
 for i, ax in enumerate(axes.flat):
@@ -435,5 +462,50 @@ for legobj in leg.legendHandles:
     legobj.set_linewidth(2.0)
 
 fig.savefig(out_dir / 'stream_chemistry.png', bbox_inches='tight', dpi=export_dpi)
+
+# =======================================================================
+# Plot biomass carbon
+
+plt.close('all')
+fig, axes = plt.subplots(ncols=2, nrows=5, figsize=(7, 7))
+cmap = sns.color_palette('colorblind', len(gcms))
+lim_factor = 0.5  # Padding value for min and max ylimits
+
+leftcols = ['agBiomass Pool', 'bgBiomass Pool', 'agLitter Pool', 'bgLitter Pool', 'Humus Pool']
+rightcols = ['{}, GCM mean'.format(x) for x in leftcols]
+ylabs = np.repeat(['gC/m2' for x in leftcols], 2)
+
+for i, scenario in enumerate(scenarios):
+    ag_biomass_pool = [x['agBiomass_Pool(gC/m2)_Delineated_Average'] for x in dailies[i]]
+    bg_biomass_pool = [x['bgBiomass_Pool(gC/m2)_Delineated_Average'] for x in dailies[i]]
+    ag_litter_pool = [x['agLitter_Pool(gC/m2)_Delineated_Average'] for x in dailies[i]]
+    bg_litter_pool = [x['bgLitter_Pool(gC/m2)_Delineated_Average'] for x in dailies[i]]
+    humus_pool = [x['Humus_Pool(gC/m2)_Delineated_Average'] for x in dailies[i]]
+
+    dfs = []
+    for df in [ag_biomass_pool, bg_biomass_pool, ag_litter_pool, bg_litter_pool, humus_pool]:
+        df = pd.concat(df, axis=1)
+        df.columns = gcms
+        df = df[(df.index.year >= sim_start.year + 1)]
+        dfs.append(df)
+
+    for j, ax in enumerate(axes):
+        dfs[j].plot(ax=axes[j, 0], linewidth=0.9, color=cmap)
+        axes[j, 0].title.set_text(leftcols[j])
+        dfs[j].mean(axis=1).plot(ax=axes[j, 1], label=scenario, color='dimgray')
+        axes[j, 1].title.set_text(rightcols[j])
+        axes[j, 0].get_legend().remove()
+
+for i, ax in enumerate(axes.flat):
+    ax.set_xlim([sim_start + pd.DateOffset(years=1), sim_end])
+    ax.xaxis.label.set_visible(False)
+    ax.set_ylabel(ylabs[i])
+
+plt.tight_layout(rect=[0, 0, 1, 0.99])
+leg = axes[0, 0].legend(loc='upper left', bbox_to_anchor=(0, 1.7), fancybox=True, ncol=5, fontsize='small')
+for legobj in leg.legendHandles:
+    legobj.set_linewidth(2.0)
+
+fig.savefig(out_dir / 'biomass_carbon.png', bbox_inches='tight', dpi=export_dpi)
 
 plt.close('all')
